@@ -54,7 +54,7 @@ function Counter() {
   return (
     <>
       <button onClick={() => increment()}>increment {counter}</button>
-      <button onClick={() => () => dicrement()}>dicrement {counter}</button>
+      <button onClick={() => dicrement()}>dicrement {counter}</button>
     </>
   );
 }
