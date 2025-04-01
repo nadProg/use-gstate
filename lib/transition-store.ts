@@ -1,11 +1,15 @@
-import { useLayoutEffect, useState } from "react";
-
-class VersionId {
+export class VersionId {
   constructor() {}
 }
-const versionId = (): VersionId => new VersionId();
+export const versionId = (): VersionId => new VersionId();
 
-export class TransitionExternalStore<T> {
+export type TransitionStoreListener<T> = (params: {
+  lastValue: T;
+  value: T;
+  version: VersionId;
+}) => void;
+
+export class TransitionExternalStore<T = unknown> {
   currentVersion: VersionId;
   currentValue: T;
   constructor(value: T) {
@@ -22,7 +26,7 @@ export class TransitionExternalStore<T> {
     this.versions.set(id, value);
     this.currentVersion = id;
     this.currentValue = value;
-    this.notify(id, { lastValue, value });
+    this.notify({ lastValue, value, version: id });
   }
 
   setCurrentVersion(value: T) {
@@ -38,45 +42,26 @@ export class TransitionExternalStore<T> {
     return this.versions.get(version)!;
   }
 
-  private listeners: Set<
-    (version: VersionId, info: { value: T; lastValue: T }) => void
-  > = new Set();
+  private listeners: Set<TransitionStoreListener<T>> = new Set();
 
-  subscribe(
-    callback: (version: VersionId, info: { value: T; lastValue: T }) => void
-  ) {
+  subscribe(callback: TransitionStoreListener<T>) {
     this.listeners.add(callback);
     return () => {
       this.listeners.delete(callback);
     };
   }
 
-  private notify(
-    version: VersionId,
-    { value, lastValue }: { value: T; lastValue: T }
-  ) {
+  private notify({
+    value,
+    lastValue,
+    version,
+  }: {
+    value: T;
+    lastValue: T;
+    version: VersionId;
+  }) {
     for (const listener of this.listeners) {
-      listener(version, { value, lastValue });
+      listener({ value, lastValue, version });
     }
   }
-}
-
-export function useSyncTransitionExternalStore<T>(
-  store: TransitionExternalStore<T>,
-  shouldUpdate: (value: T, lastValue: T) => boolean = () => true
-): T {
-  const [version, setVersion] = useState<VersionId>(store.currentVersion);
-
-  useLayoutEffect(() => {
-    const unsubscribe = store.subscribe((version, { lastValue, value }) => {
-      if (shouldUpdate(value, lastValue)) {
-        setVersion(version);
-      }
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [store]);
-
-  return store.getValue(version);
 }

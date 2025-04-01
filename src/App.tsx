@@ -1,61 +1,108 @@
 import "./App.css";
 
 import { createGState } from "../lib";
-import { Suspense, use, useTransition, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const useTodoList = createGState(() => {
+  const [todos, setTodos] = useState<{ id: number; title: string }[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-const useGAsyncCounter = createGState((def: number) => {
-  const [counter, setCounter] = useState(sleep(3000).then(() => def));
-
-  const increment = () => {
-    setCounter((last) =>
-      last.then(async (r) => {
-        await sleep(1000);
-        return r + 1;
-      })
-    );
-  };
-
-  const dicrement = () => {
-    setCounter((last) => last.then((r) => r - 1));
-  };
+  useEffect(() => {
+    setIsLoading(true);
+    fetch("http://jsonplaceholder.typicode.com/todos")
+      .then((res) => res.json())
+      .then((data) => setTodos(data))
+      .finally(() => setIsLoading(false));
+  }, []);
 
   return {
-    counter,
-    increment,
-    dicrement,
+    todos,
+    isLoading,
   };
 });
 
 function useCounter() {
+  const rerenderRef = useRef(0);
+
+  rerenderRef.current++;
+
   const [counter, setCounter] = useState(0);
+  const [counter2, setCounter2] = useState(0);
 
-  const increment = () => {
+  const increment = useCallback(() => {
     setCounter((last) => last + 1);
-  };
+    setCounter2((last) => last + 1);
+  }, []);
 
-  const dicrement = () => {
-    setCounter((last) => last - 1);
-  };
+  const dicrement = useCallback(() => {
+    setCounter2((last) => last - 1);
+  }, []);
+
+  const memoCounter = useMemo(() => ({ counter }), [counter]);
+
+  console.log("render", counter);
+
+  useEffect(() => {
+    console.log("effect");
+
+    increment();
+    return () => {
+      console.log("unmount");
+    };
+  }, [increment]);
+
+  useEffect(() => {
+    console.log("effect2", memoCounter.counter);
+
+    return () => {
+      console.log("unmount2", memoCounter.counter);
+    };
+  }, [memoCounter]);
 
   return {
-    counter,
+    counter: memoCounter.counter + counter2,
     increment,
     dicrement,
+    rerenderCounter: rerenderRef.current,
   };
 }
 
 const useGSyncCounter = createGState(() => useCounter());
 
 function Counter() {
-  const { counter, increment, dicrement } = useGSyncCounter({});
+  const { counter, increment, dicrement, rerenderCounter } = useGSyncCounter();
 
   return (
     <>
-      <button onClick={() => increment()}>increment {counter}</button>
+      <button onClick={() => increment()}>
+        increment {counter} rerender {rerenderCounter}
+      </button>
       <button onClick={() => dicrement()}>dicrement {counter}</button>
     </>
+  );
+}
+
+function TodoList({ index }: { index: number }) {
+  const { todos, isLoading } = useTodoList();
+
+  console.log(todos);
+  return (
+    <div>
+      {isLoading ? (
+        <div>loading</div>
+      ) : (
+        [todos[index] ?? []].map((todo) => (
+          <div key={todo.id}>{todo.title}</div>
+        ))
+      )}
+    </div>
   );
 }
 
@@ -69,6 +116,9 @@ function App() {
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
+      <TodoList index={0} />
+      <TodoList index={1} />
+
       <Suspense fallback={<div>loading</div>}>
         <Counter />
         <Counter />
@@ -84,9 +134,7 @@ function App() {
 }
 
 function Increment() {
-  const increment = useGSyncCounter({
-    select: (s) => s.increment,
-  });
+  const increment = useGSyncCounter((s) => s.increment);
 
   return <button onClick={() => increment()}>increment</button>;
 }
