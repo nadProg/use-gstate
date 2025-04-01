@@ -1,11 +1,12 @@
 import "./App.css";
 
-import { useGState, createGState } from "../lib";
-import { Suspense, use, useTransition } from "react";
+import { createGState } from "../lib";
+import { Suspense, use, useTransition, useState } from "react";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const useGCounter = createGState((def: number) => {
-  const [counter, setCounter] = useGState(sleep(3000).then(() => def));
+
+const useGAsyncCounter = createGState((def: number) => {
+  const [counter, setCounter] = useState(sleep(3000).then(() => def));
 
   const increment = () => {
     setCounter((last) =>
@@ -20,14 +21,43 @@ const useGCounter = createGState((def: number) => {
     setCounter((last) => last.then((r) => r - 1));
   };
 
-  console.log("counter", counter);
-
   return {
     counter,
     increment,
     dicrement,
   };
 });
+
+function useCounter() {
+  const [counter, setCounter] = useState(0);
+
+  const increment = () => {
+    setCounter((last) => last + 1);
+  };
+
+  const dicrement = () => {
+    setCounter((last) => last - 1);
+  };
+
+  return {
+    counter,
+    increment,
+    dicrement,
+  };
+}
+
+const useGSyncCounter = createGState(() => useCounter());
+
+function Counter() {
+  const { counter, increment, dicrement } = useGSyncCounter({});
+
+  return (
+    <>
+      <button onClick={() => increment()}>increment {counter}</button>
+      <button onClick={() => () => dicrement()}>dicrement {counter}</button>
+    </>
+  );
+}
 
 function App() {
   return (
@@ -53,35 +83,8 @@ function App() {
   );
 }
 
-function Counter() {
-  const [isLoading, startTranstion] = useTransition();
-  const { counter, increment, dicrement } = useGCounter({
-    params: 10,
-  });
-
-  const v = use(counter);
-
-  return (
-    <>
-      <button
-        style={{ opacity: isLoading ? 0.5 : 1 }}
-        onClick={() => startTranstion(() => increment())}
-      >
-        increment {v}
-      </button>
-      <button
-        style={{ opacity: isLoading ? 0.5 : 1 }}
-        onClick={() => startTranstion(() => dicrement())}
-      >
-        dicrement {v}
-      </button>
-    </>
-  );
-}
-
 function Increment() {
-  const increment = useGCounter({
-    params: 10,
+  const increment = useGSyncCounter({
     select: (s) => s.increment,
   });
 
