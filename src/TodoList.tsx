@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { createGState } from "use-gstate";
+import { createGState } from "../lib";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
