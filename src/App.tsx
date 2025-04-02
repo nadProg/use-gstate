@@ -2,31 +2,15 @@ import "./App.css";
 
 import { createGState } from "../lib";
 import {
-  Suspense,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-
-const useTodoList = createGState(() => {
-  const [todos, setTodos] = useState<{ id: number; title: string }[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setIsLoading(true);
-    fetch("http://jsonplaceholder.typicode.com/todos")
-      .then((res) => res.json())
-      .then((data) => setTodos(data))
-      .finally(() => setIsLoading(false));
-  }, []);
-
-  return {
-    todos,
-    isLoading,
-  };
-});
+import { FormErrors, GlobalForm } from "./Form";
+import { GlobalTodoList } from "./TodoList";
 
 function useCounter() {
   const rerenderRef = useRef(0);
@@ -47,17 +31,6 @@ function useCounter() {
 
   const memoCounter = useMemo(() => ({ counter }), [counter]);
 
-  console.log("render", counter);
-
-  useEffect(() => {
-    console.log("effect");
-
-    increment();
-    return () => {
-      console.log("unmount");
-    };
-  }, [increment]);
-
   useEffect(() => {
     console.log("effect2", memoCounter.counter);
 
@@ -65,6 +38,16 @@ function useCounter() {
       console.log("unmount2", memoCounter.counter);
     };
   }, [memoCounter]);
+
+  useLayoutEffect(() => {
+    console.log("effect");
+
+    increment();
+
+    return () => {
+      console.log("unmount");
+    };
+  }, [increment]);
 
   return {
     counter: memoCounter.counter + counter2,
@@ -89,23 +72,6 @@ function Counter() {
   );
 }
 
-function TodoList({ index }: { index: number }) {
-  const { todos, isLoading } = useTodoList();
-
-  console.log(todos);
-  return (
-    <div>
-      {isLoading ? (
-        <div>loading</div>
-      ) : (
-        [todos[index] ?? []].map((todo) => (
-          <div key={todo.id}>{todo.title}</div>
-        ))
-      )}
-    </div>
-  );
-}
-
 function App() {
   return (
     <>
@@ -116,27 +82,20 @@ function App() {
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
-      <TodoList index={0} />
-      <TodoList index={1} />
 
-      <Suspense fallback={<div>loading</div>}>
-        <Counter />
-        <Counter />
-        <Counter />
-      </Suspense>
-      <Increment />
+      <hr />
+      <FormErrors />
+      <hr />
+      <GlobalForm />
 
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <hr />
+      <GlobalTodoList />
+      <GlobalTodoList />
     </>
   );
-}
-
-function Increment() {
-  const increment = useGSyncCounter((s) => s.increment);
-
-  return <button onClick={() => increment()}>increment</button>;
 }
 
 export default App;

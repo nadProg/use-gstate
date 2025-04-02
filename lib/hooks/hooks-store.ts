@@ -1,4 +1,5 @@
-import { Bather, TimerBather } from "../scheduler";
+import { flushSync } from "react-dom";
+import { Bather, MicroTaskBather, TimerBather } from "../scheduler";
 import { shallowEqualArrays } from "../shallow-equal";
 import * as React from "react";
 
@@ -14,12 +15,14 @@ const applyAction = <T>(action: React.SetStateAction<T>, last: T) => {
 type Effect = {
   fn: () => (() => void) | undefined;
   deps: unknown[];
+  type: "effect" | "layout-effect";
 };
 
 type EffectState = {
   __type: "effect";
   clearFunction: () => void;
   deps: unknown[];
+  type: "effect" | "layout-effect";
   effects: Effect[];
 };
 
@@ -29,9 +32,12 @@ export class HooksStore {
   effects: Effect[] = new Array(100);
   currentIndex = -1;
 
+  private effectsBather: Bather = new TimerBather();
+  private layoutEffectsBather: Bather = new MicroTaskBather();
+
   timeout: NodeJS.Timeout | undefined = undefined;
 
-  constructor(private bather: Bather = new TimerBather()) {}
+  constructor() {}
 
   getCurrent<T = unknown>(
     initialState: T
@@ -55,25 +61,32 @@ export class HooksStore {
   }
 
   scheduleEffect(effect: Effect) {
-    clearTimeout(this.timeout);
-
     const effectsState = this.getCurrent({
       __type: "effect",
       clearFunction: () => {},
       deps: ["______def_____"],
+      type: effect.type,
       effects: [],
     } as EffectState);
 
     effectsState[0].effects.push(effect);
 
-    this.bather.schedule(() => {
-      this.runAllEffects();
-    });
+    if (effect.type === "layout-effect") {
+      this.layoutEffectsBather.schedule(() => {
+        flushSync(() => {
+          this.runAllEffects("layout-effect");
+        });
+      });
+    } else {
+      this.effectsBather.schedule(() => {
+        this.runAllEffects("effect");
+      });
+    }
   }
 
-  runAllEffects() {
+  runAllEffects(type: "layout-effect" | "effect") {
     this.dataList.forEach(([data]) => {
-      if (data.__type === "effect") {
+      if (data.__type === "effect" && data.type === type) {
         const effectState = data as EffectState;
 
         while (effectState.effects.length) {
@@ -110,7 +123,7 @@ export class HooksStore {
   }
 
   notifyListeners() {
-    this.bather.schedule(() => {
+    this.layoutEffectsBather.schedule(() => {
       this.listeners.forEach((cb) => cb());
     });
   }

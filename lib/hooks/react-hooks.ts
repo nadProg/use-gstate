@@ -42,7 +42,46 @@ export class ReactHooksMock {
   private useEffect: typeof React.useEffect = (fn: any, deps: any) => {
     const store = this.context.getTopState();
     store.next();
-    store.scheduleEffect({ fn, deps });
+    store.scheduleEffect({ fn, deps, type: "effect" });
+  };
+
+  private useLayoutEffect: typeof React.useEffect = (fn: any, deps: any) => {
+    const store = this.context.getTopState();
+    store.next();
+    store.scheduleEffect({ fn, deps, type: "layout-effect" });
+  };
+
+  private useSyncExternalStore: typeof React.useSyncExternalStore = (
+    subscribe: any,
+    getSnapshot: any,
+    getServerSnapshot: any
+  ) => {
+    if (typeof window === "undefined") {
+      return getServerSnapshot();
+    }
+
+    const snapshot = getSnapshot();
+
+    const [state, setState] = this.useState({
+      count: 0,
+      lastSnapshot: snapshot,
+    });
+
+    this.useEffect(() => {
+      return subscribe(() => {
+        const newSnapshot = getSnapshot();
+        if (state.lastSnapshot !== newSnapshot) {
+          setState((s) => ({
+            ...s,
+            lastSnapshot: newSnapshot,
+            count: s.count + 1,
+          }));
+          return;
+        }
+      });
+    });
+
+    return snapshot;
   };
 
   applyHooks() {
@@ -53,6 +92,8 @@ export class ReactHooksMock {
     ReactSharedInternals.H.useMemo = this.useMemo;
     ReactSharedInternals.H.useCallback = this.useCallback;
     ReactSharedInternals.H.useEffect = this.useEffect;
+    ReactSharedInternals.H.useLayoutEffect = this.useLayoutEffect;
+    ReactSharedInternals.H.useSyncExternalStore = this.useSyncExternalStore;
 
     return () => {
       Object.assign(ReactSharedInternals.H, last);

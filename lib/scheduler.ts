@@ -24,7 +24,7 @@ export class MicroTaskBather implements Bather {
   schedule(fn: () => void) {
     this.cb = fn;
     if (!this.isScheduled) {
-      setTimeout(() => {
+      queueMicrotask(() => {
         this.cb();
         this.isScheduled = false;
       });
