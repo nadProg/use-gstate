@@ -116,6 +116,7 @@ function CounterDisplay() {
                     status: { text: "Full Support", color: "green" },
                     notes: "Side effects work as expected",
                   },
+
                   {
                     hook: "useLayoutEffect",
                     status: { text: "Full Support", color: "green" },
@@ -138,12 +139,37 @@ function CounterDisplay() {
                     notes: "Fully supported for state with actions",
                   },
                   {
+                    hook: "useId",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
+                  },
+                  {
                     hook: "useTransition",
                     status: { text: "Not Supported", color: "red" },
                     notes: "Not currently implemented",
                   },
                   {
                     hook: "useDeferredValue",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
+                  },
+                  {
+                    hook: "useFormStatus (React 19)",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
+                  },
+                  {
+                    hook: "useActionState (React 19)",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
+                  },
+                  {
+                    hook: "useOptimistic (React 19)",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
+                  },
+                  {
+                    hook: "use (React 19)",
                     status: { text: "Not Supported", color: "red" },
                     notes: "Not currently implemented",
                   },
