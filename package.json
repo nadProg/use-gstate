@@ -1,5 +1,5 @@
 {
-  "name": "use-gstate",
+  "name": "create-gstore",
   "version": "0.1.0",
   "description": "A lightweight, powerful state management library for React applications that allows you to create global state from React hooks",
   "type": "module",
@@ -15,9 +15,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/evo-community/use-gstate"
+    "url": "https://github.com/evo-community/create-gstore"
   },
-  "homepage": "https://use-gstate.netlify.app",
+  "homepage": "https://evo-community.github.io/use-gstate",
   "files": [
     "dist"
   ],

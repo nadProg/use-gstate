@@ -22,7 +22,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, "lib/index.js"),
-      name: "use-gstate",
+      name: "create-gstore",
       // the proper extensions will be added
       fileName: "lib",
     },

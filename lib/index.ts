@@ -1,37 +1,37 @@
 import { GStore, GStoreOptions } from "./store";
 import { type TransitionStoreListener } from "./transition-store";
 
-type GState<State> = {
+// Renamed from GState to GStoreHook to be more consistent with createGStore
+type GStoreHook<State> = {
   (): State;
-  <R>(select: (state: State) => R): R;
+  <R>(select: (state: State) => R, mode?: "shallow" | "strict"): R;
 
   getState: () => State;
-  setState: (state: State) => void;
   subscribe: (callback: TransitionStoreListener<State>) => () => void;
-  destory: () => void;
+  destroy: () => void; // Fixed typo in destroy method name
 };
 
-export function createGState<State>(
+export function createGStore<State>(
   fn: () => State,
   options?: GStoreOptions
-): GState<State>;
-export function createGState(stateFactory: any, storeOptions = {}) {
+): GStoreHook<State>;
+export function createGStore(stateFactory: any, storeOptions = {}) {
   const store = new GStore(stateFactory, storeOptions);
 
-  function useStateHook(selector?: (state: any) => any) {
-    return store.useReact(selector);
+  function useStateHook(
+    selector?: (state: any) => any,
+    mode?: "shallow" | "strict"
+  ) {
+    return store.useReact(selector, mode);
   }
 
-  useStateHook.destory = () => {
+  useStateHook.destroy = () => {
+    // Fixed typo in destroy method name
     store.destroy();
   };
 
   useStateHook.getState = () => {
     return store.getState();
-  };
-
-  useStateHook.setState = (state: any) => {
-    store.setState(state);
   };
 
   useStateHook.subscribe = (callback: any) => {

@@ -30,7 +30,7 @@
       "@/*": [
         "src/*"
       ],
-      "use-gstate": [
+      "create-gstore": [
         "lib/index.ts"
       ]
     }

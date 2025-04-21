@@ -1,4 +1,4 @@
-# use-gstate
+# create-gstore
 
 A lightweight, powerful state management library for React applications that allows you to create global state from React hooks.
 
@@ -14,22 +14,22 @@ A lightweight, powerful state management library for React applications that all
 
 For complete documentation with interactive examples, visit:
 
-**[📚 use-gstate Documentation](https://use-gstate.netlify.app)**
+**[📚 create-gstore Documentation](https://create-gstore.netlify.app)**
 
 ## Installation
 
 ```bash
-npm install use-gstate
+npm install create-gstore
 ```
 
 ## Quick Start
 
 ```jsx
-import { createGState } from "use-gstate";
+import { createGStore } from "create-gstore";
 import { useState } from "react";
 
 // Define a global state from a hook
-const useGlobalCounter = createGState(() => {
+const useGlobalCounter = createGStore(() => {
   const [count, setCount] = useState(0);
 
   const increment = () => setCount(count + 1);

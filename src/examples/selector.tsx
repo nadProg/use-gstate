@@ -1,8 +1,8 @@
-import { createGState } from "../../lib";
+import { createGStore } from "../../lib";
 import { useState, useCallback, useRef } from "react";
 
 // Create a global state
-const useGlobalState = createGState(() => {
+const useGlobalState = createGStore(() => {
   const [user, setUser] = useState({ name: "John", age: 30 });
   const [settings, setSettings] = useState({ theme: "dark" });
 
@@ -69,8 +69,13 @@ export function UserNameDisplay() {
 // Component that only uses and updates theme settings
 export function ThemeToggle() {
   // Only re-renders when settings.theme changes
-  const theme = useGlobalState((state) => state.settings.theme);
-  const updateTheme = useGlobalState((state) => state.updateTheme);
+  const { theme, updateTheme } = useGlobalState(
+    (state) => ({
+      theme: state.settings.theme,
+      updateTheme: state.updateTheme,
+    }),
+    "shallow"
+  );
 
   const settingsRenderCount = useRef(0);
   settingsRenderCount.current++;

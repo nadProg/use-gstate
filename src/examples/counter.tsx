@@ -1,4 +1,4 @@
-import { createGState } from "../../lib";
+import { createGStore } from "../../lib";
 import {
   useCallback,
   useEffect,
@@ -9,7 +9,7 @@ import {
 } from "react";
 import "./examples.css";
 
-const useGSyncCounter = createGState(() => {
+const useGSyncCounter = createGStore(() => {
   const rerenderRef = useRef(0);
 
   rerenderRef.current++;

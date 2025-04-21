@@ -1,4 +1,4 @@
-import { createGState } from "../../lib";
+import { createGStore } from "../../lib";
 import {
   QueryClient,
   QueryClientProvider,
@@ -26,20 +26,15 @@ const fetchPokemon = async (id: number) => {
 };
 
 // Create global state with React Query
-const useGlobalPokemon = createGState(() => {
+const useGlobalPokemon = createGStore(() => {
   // Local state for the Pokemon ID to fetch
   const [pokemonId, setPokemonId] = useState(1);
 
   // React Query hook for data fetching
-  const query = useQuery(
-    {
-      queryKey: ["pokemon", pokemonId],
-      queryFn: () => fetchPokemon(pokemonId),
-    },
-    // Important: Pass the QueryClient to useQuery.
-    // use-gstate not support context now!
-    queryClient
-  );
+  const query = useQuery({
+    queryKey: ["pokemon", pokemonId],
+    queryFn: () => fetchPokemon(pokemonId),
+  });
 
   // Function to load the next Pokemon
   const loadNextPokemon = () => {
@@ -168,10 +163,10 @@ export function ReactQueryExample() {
     <QueryClientProvider client={queryClient}>
       <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md">
         <h2 className="text-xl font-medium text-gray-800 mb-4">
-          React Query + use-gstate
+          React Query + create-gstore
         </h2>
         <p className="text-gray-600 mb-6">
-          This example demonstrates how to use React Query with use-gstate to
+          This example demonstrates how to use React Query with create-gstore to
           create global data fetching state.
         </p>
 

@@ -10,7 +10,7 @@ export class HooksContext {
   getTopState() {
     const state = this.stateStack[this.stateStack.length - 1];
     if (!state) {
-      throw new Error("Use should run useG hooks only in createGState context");
+      throw new Error("Use should run useG hooks only in createGStore context");
     }
     return state;
   }

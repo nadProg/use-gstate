@@ -17,6 +17,17 @@ export class ReactHooksMock {
     return store.getCurrent(initialState);
   };
 
+  private useReducer: typeof React.useReducer = (
+    reducer: any,
+    initialState: any
+  ): [any, (action: any) => void] => {
+    const [state, setState] = this.useState(initialState);
+    const dispatch = this.useCallback((action: any) => {
+      setState((s: any) => reducer(s, action));
+    }, []);
+    return [state, dispatch];
+  };
+
   private useRef: typeof React.useRef = (initialState?: any): any => {
     const [res] = this.useState({ current: initialState });
     return res;
@@ -100,6 +111,7 @@ export class ReactHooksMock {
     ReactSharedInternals.H.useLayoutEffect = this.useLayoutEffect;
     ReactSharedInternals.H.useSyncExternalStore = this.useSyncExternalStore;
     ReactSharedInternals.H.useContext = this.useContext;
+    ReactSharedInternals.H.useReducer = this.useReducer;
 
     return () => {
       Object.assign(ReactSharedInternals.H, last);

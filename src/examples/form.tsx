@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { createGState } from "../../lib";
+import { createGStore } from "../../lib";
 import "./examples.css";
 
 // Define form input types
@@ -10,7 +10,7 @@ type Inputs = {
 };
 
 // Create a global state from the form hook
-const useGForm = createGState(() => {
+const useGForm = createGStore(() => {
   const {
     register,
     handleSubmit,

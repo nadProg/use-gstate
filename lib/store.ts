@@ -103,7 +103,7 @@ export class GStore<T> {
 
   useReact = <Res = T>(
     selector = (state: T) => state as unknown as Res,
-    compareMode: "simple" | "shallow" = "simple"
+    compareMode: "shallow" | "strict" = "strict"
   ) => {
     const lastValue = React.useRef<Res | undefined>(undefined);
 

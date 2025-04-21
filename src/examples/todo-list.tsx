@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { createGState } from "../../lib";
+import { createGStore } from "../../lib";
 import "./examples.css";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const useCounter2 = createGState(() => {
+const useCounter2 = createGStore(() => {
   const [counter, setCounter] = useState(0);
   const increment = useCallback(() => {
     setCounter((last) => last + 1);
@@ -12,7 +12,7 @@ const useCounter2 = createGState(() => {
   return { counter, increment };
 });
 
-const useTodoList = createGState(() => {
+const useTodoList = createGStore(() => {
   const [todos, setTodos] = useState<{ id: number; title: string }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
