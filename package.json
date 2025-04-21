@@ -1,6 +1,6 @@
 {
   "name": "create-gstore",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A lightweight, powerful state management library for React applications that allows you to create global state from React hooks",
   "type": "module",
   "private": false,
