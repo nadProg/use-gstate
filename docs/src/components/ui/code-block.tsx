@@ -7,12 +7,7 @@ type CodeBlockProps = {
   showLineNumbers?: boolean;
 };
 
-export function CodeBlock({
-  code,
-  language,
-  filename,
-  showLineNumbers = true,
-}: CodeBlockProps) {
+export function CodeBlock({ code, language, filename }: CodeBlockProps) {
   return (
     <div className="rounded-lg overflow-hidden mb-6">
       {filename && (
@@ -38,11 +33,6 @@ export function CodeBlock({
           >
             {tokens.map((line, i) => (
               <div key={i} {...getLineProps({ line, key: i })}>
-                {showLineNumbers && (
-                  <span className="inline-block w-8 opacity-50 text-right mr-4">
-                    {i + 1}
-                  </span>
-                )}
                 {line.map((token, key) => (
                   <span key={key} {...getTokenProps({ token, key })} />
                 ))}
