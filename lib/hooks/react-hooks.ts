@@ -103,19 +103,18 @@ export class ReactHooksMock {
   applyHooks() {
     const last = ReactSharedInternals.H;
 
-    if (!ReactSharedInternals.H) {
-      ReactSharedInternals.H = {};
-    }
-
-    ReactSharedInternals.H.useState = this.useState;
-    ReactSharedInternals.H.useRef = this.useRef;
-    ReactSharedInternals.H.useMemo = this.useMemo;
-    ReactSharedInternals.H.useCallback = this.useCallback;
-    ReactSharedInternals.H.useEffect = this.useEffect;
-    ReactSharedInternals.H.useLayoutEffect = this.useLayoutEffect;
-    ReactSharedInternals.H.useSyncExternalStore = this.useSyncExternalStore;
-    ReactSharedInternals.H.useContext = this.useContext;
-    ReactSharedInternals.H.useReducer = this.useReducer;
+    ReactSharedInternals.H = {
+      ...last,
+      useState: this.useState,
+      useRef: this.useRef,
+      useMemo: this.useMemo,
+      useCallback: this.useCallback,
+      useEffect: this.useEffect,
+      useLayoutEffect: this.useLayoutEffect,
+      useSyncExternalStore: this.useSyncExternalStore,
+      useContext: this.useContext,
+      useReducer: this.useReducer,
+    };
 
     return () => {
       ReactSharedInternals.H = last;
