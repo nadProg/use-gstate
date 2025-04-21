@@ -101,7 +101,11 @@ export class ReactHooksMock {
   };
 
   applyHooks() {
-    const last = { ...ReactSharedInternals.H };
+    const last = ReactSharedInternals.H;
+
+    if (!ReactSharedInternals.H) {
+      ReactSharedInternals.H = {};
+    }
 
     ReactSharedInternals.H.useState = this.useState;
     ReactSharedInternals.H.useRef = this.useRef;
@@ -114,7 +118,7 @@ export class ReactHooksMock {
     ReactSharedInternals.H.useReducer = this.useReducer;
 
     return () => {
-      Object.assign(ReactSharedInternals.H, last);
+      ReactSharedInternals.H = last;
     };
   }
 }
