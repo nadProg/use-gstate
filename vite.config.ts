@@ -1,10 +1,12 @@
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import * as path from "path";
+import { fileURLToPath } from "url";
 import dts from "vite-plugin-dts";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+// Get dirname in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [
@@ -15,11 +17,11 @@ export default defineConfig({
     }),
   ],
   css: {
-    postcss: './postcss.config.js',
+    postcss: "./postcss.config.js",
   },
   build: {
     lib: {
-      entry: resolve(__dirname, "lib/index.js"),
+      entry: path.resolve(__dirname, "lib/index.js"),
       name: "use-gstate",
       // the proper extensions will be added
       fileName: "lib",

@@ -35,7 +35,7 @@ export class HooksStore {
   private effectsBather: Bather = new TimerBather();
   private layoutEffectsBather: Bather = new MicroTaskBather();
 
-  timeout: NodeJS.Timeout | undefined = undefined;
+  timeout: ReturnType<typeof setTimeout> | undefined = undefined;
 
   constructor() {}
 
