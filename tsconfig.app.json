@@ -23,6 +23,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "outDir": "dist",
+    "declaration": true,
     "baseUrl": "./",
     "paths": {
       "@/*": [
@@ -35,6 +37,7 @@
   },
   "include": [
     "src",
+    "docs",
     "lib",
     "public"
   ]

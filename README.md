@@ -1,54 +1,72 @@
-# React + TypeScript + Vite
+# use-gstate
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight, powerful state management library for React applications that allows you to create global state from React hooks.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Share Hook Logic**: Turn any local React hook into global shared state
+- **Zero Dependencies**: Minimal footprint with no external dependencies
+- **Composable**: Easily combine multiple state sources
+- **Performance Optimized**: Re-renders only when necessary
+- **Familiar API**: Intuitive API similar to React's built-in hooks
 
-## Expanding the ESLint configuration
+## Documentation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+For complete documentation with interactive examples, visit:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+**[📚 use-gstate Documentation](https://use-gstate.netlify.app)**
+
+## Installation
+
+```bash
+npm install use-gstate
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Quick Start
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```jsx
+import { createGState } from "use-gstate";
+import { useState } from "react";
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+// Define a global state from a hook
+const useGlobalCounter = createGState(() => {
+  const [count, setCount] = useState(0);
+
+  const increment = () => setCount(count + 1);
+
+  return { count, increment };
+});
+
+// Use the global state in any component
+function CounterButton() {
+  const { count, increment } = useGlobalCounter();
+  return <button onClick={increment}>Count: {count}</button>;
+}
+
+// Use the same state in another component
+function CounterDisplay() {
+  const { count } = useGlobalCounter();
+  return <div>Current count: {count}</div>;
+}
 ```
+
+This approach allows you to:
+
+1. **Optimize performance**: Components only re-render when the specific data they use changes
+2. **Separate concerns**: Components can access only the state they need
+3. **Simplify components**: No need to use `useMemo` or other optimization techniques
+   |
+
+This approach allows you to:
+
+1. **Optimize performance**: Components only re-render when the specific data they use changes
+2. **Separate concerns**: Components can access only the state they need
+3. **Simplify components**: No need to use `useMemo` or other optimization techniques
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT

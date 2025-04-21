@@ -84,6 +84,11 @@ export class ReactHooksMock {
     return snapshot;
   };
 
+  private useContext: typeof React.useContext = (context: any) => {
+    // Это всё и так опасно. Но это вдвойне опасно)
+    return this.useState(context._currentValue ?? context._currentValue2)[0];
+  };
+
   applyHooks() {
     const last = { ...ReactSharedInternals.H };
 
@@ -94,6 +99,7 @@ export class ReactHooksMock {
     ReactSharedInternals.H.useEffect = this.useEffect;
     ReactSharedInternals.H.useLayoutEffect = this.useLayoutEffect;
     ReactSharedInternals.H.useSyncExternalStore = this.useSyncExternalStore;
+    ReactSharedInternals.H.useContext = this.useContext;
 
     return () => {
       Object.assign(ReactSharedInternals.H, last);

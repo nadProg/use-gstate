@@ -101,11 +101,29 @@ export class GStore<T> {
     };
   };
 
-  useReact = <Res = T>(selector = (state: T) => state as unknown as Res) => {
+  useReact = <Res = T>(
+    selector = (state: T) => state as unknown as Res,
+    compareMode: "simple" | "shallow" = "simple"
+  ) => {
+    const lastValue = React.useRef<Res | undefined>(undefined);
+
+    const selectorWithMode = (state: T) => {
+      if (compareMode === "shallow") {
+        const next = selector(state);
+        if (!compare(lastValue.current, next)) {
+          lastValue.current = next;
+          return next;
+        }
+        return lastValue.current!;
+      } else {
+        return selector(state);
+      }
+    };
+
     return React.useSyncExternalStore(
       this.subscribe,
-      () => selector(this.getState()),
-      () => selector(this.getState())
+      () => selectorWithMode(this.getState()),
+      () => selectorWithMode(this.getState())
     );
   };
 }

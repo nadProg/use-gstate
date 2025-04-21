@@ -14,6 +14,9 @@ export default defineConfig({
       rollupTypes: true,
     }),
   ],
+  css: {
+    postcss: './postcss.config.js',
+  },
   build: {
     lib: {
       entry: resolve(__dirname, "lib/index.js"),

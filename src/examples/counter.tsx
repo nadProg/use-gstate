@@ -1,6 +1,4 @@
-import "./App.css";
-
-import { createGState } from "../lib";
+import { createGState } from "../../lib";
 import {
   useCallback,
   useEffect,
@@ -9,10 +7,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { FormErrors, GlobalForm } from "./Form";
-import { GlobalTodoList } from "./TodoList";
+import "./examples.css";
 
-function useCounter() {
+const useGSyncCounter = createGState(() => {
   const rerenderRef = useRef(0);
 
   rerenderRef.current++;
@@ -55,47 +52,36 @@ function useCounter() {
     dicrement,
     rerenderCounter: rerenderRef.current,
   };
-}
+});
 
-const useGSyncCounter = createGState(() => useCounter());
-
-function Counter() {
+export function GlobalCounter() {
   const { counter, increment, dicrement, rerenderCounter } = useGSyncCounter();
 
   return (
-    <>
-      <button onClick={() => increment()}>
-        increment {counter} rerender {rerenderCounter}
-      </button>
-      <button onClick={() => dicrement()}>dicrement {counter}</button>
-    </>
-  );
-}
-
-function App() {
-  return (
-    <>
-      <div></div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+    <div className="counter-container">
+      <h2>Counter Example</h2>
+      <div>
+        <div className="counter-value">{counter}</div>
+        <div className="render-count">Renders: {rerenderCounter}</div>
+        <div className="button-group">
+          <button onClick={() => increment()}>Increment</button>
+          <button onClick={() => dicrement()}>Decrement</button>
+        </div>
       </div>
-
-      <hr />
-      <FormErrors />
-      <hr />
-      <GlobalForm />
-
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      <hr />
-      <GlobalTodoList />
-      <GlobalTodoList />
-    </>
+    </div>
   );
 }
 
-export default App;
+export function CounterDisplay() {
+  const { counter } = useGSyncCounter();
+
+  return (
+    <div className="counter-display">
+      <h3>Counter Display</h3>
+      <p>
+        Current count: <span>{counter}</span>
+      </p>
+      <p className="note">This component reads from the same global state</p>
+    </div>
+  );
+}
