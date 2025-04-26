@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export type validArrayValue = any[] | null | undefined;
 
 export function shallowEqualArrays(
   arrA: validArrayValue,
-  arrB: validArrayValue
+  arrB: validArrayValue,
 ): boolean {
   if (arrA === arrB) {
     return true;
@@ -32,7 +31,7 @@ export type validObjectValue = Record<string, any> | null | undefined;
 
 export function shallowEqualObjects(
   objA: validObjectValue,
-  objB: validObjectValue
+  objB: validObjectValue,
 ): boolean {
   if (objA === objB) {
     return true;

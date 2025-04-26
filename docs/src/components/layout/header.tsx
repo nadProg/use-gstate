@@ -17,7 +17,7 @@ export function Header({ isMobileMenuOpen, setIsMobileMenuOpen }: HeaderProps) {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="text-gray-600 hover:text-gray-900"
-            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
           >
             <svg
               className="h-6 w-6"
@@ -31,8 +31,8 @@ export function Header({ isMobileMenuOpen, setIsMobileMenuOpen }: HeaderProps) {
                 strokeWidth={2}
                 d={
                   isMobileMenuOpen
-                    ? "M6 18L18 6M6 6l12 12"
-                    : "M4 6h16M4 12h16M4 18h16"
+                    ? 'M6 18L18 6M6 6l12 12'
+                    : 'M4 6h16M4 12h16M4 18h16'
                 }
               />
             </svg>

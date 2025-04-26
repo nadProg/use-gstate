@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   navigationLinks,
   defaultOpenSections,
   type NavigationLink,
-} from "../../config/navigation";
+} from '../../config/navigation';
 
 type SidebarProps = {
   className?: string;
@@ -12,22 +12,22 @@ type SidebarProps = {
 };
 
 export function Sidebar({
-  className = "",
+  className = '',
   isMobile = false,
   onLinkClick,
 }: SidebarProps) {
   const [openSections, setOpenSections] =
     useState<Record<string, boolean>>(defaultOpenSections);
-  const [activeSection, setActiveSection] = useState<string>("");
+  const [activeSection, setActiveSection] = useState<string>('');
 
   // Track scroll position and update active section
   useEffect(() => {
     const handleScroll = () => {
       // Find all section headers
-      const sections = document.querySelectorAll("section[id], h2[id], h3[id]");
+      const sections = document.querySelectorAll('section[id], h2[id], h3[id]');
 
       // Find the current section
-      let currentSection = "";
+      let currentSection = '';
       sections.forEach((section) => {
         if (section.getBoundingClientRect().top <= 100) {
           currentSection = section.id;
@@ -41,7 +41,7 @@ export function Sidebar({
         navigationLinks.forEach((link) => {
           if (link.children) {
             const childFound = link.children.some(
-              (child) => child.anchor === currentSection
+              (child) => child.anchor === currentSection,
             );
             if (childFound) {
               setOpenSections((prev) => ({
@@ -54,8 +54,8 @@ export function Sidebar({
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [activeSection]);
 
   const toggleSection = (title: string) => {
@@ -74,9 +74,9 @@ export function Sidebar({
   return (
     <aside
       className={`${
-        isMobile ? "w-full" : "w-64"
+        isMobile ? 'w-full' : 'w-64'
       } bg-white shadow-sm overflow-y-auto ${
-        isMobile ? "" : "fixed top-0 z-50 h-screen"
+        isMobile ? '' : 'fixed top-0 z-50 h-screen'
       } ${className}`}
     >
       {!isMobile && (
@@ -140,8 +140,8 @@ function SidebarItem({
           <div
             className={`w-full flex items-center justify-between px-2 py-2 text-sm font-medium rounded-md cursor-pointer ${
               isActive
-                ? "text-indigo-600 bg-indigo-50"
-                : "text-gray-700 hover:bg-gray-50"
+                ? 'text-indigo-600 bg-indigo-50'
+                : 'text-gray-700 hover:bg-gray-50'
             }`}
             onClick={() => toggleSection(link.title)}
           >
@@ -157,7 +157,7 @@ function SidebarItem({
             </a>
             <svg
               className={`ml-1 h-5 w-5 transform transition-transform duration-200 ${
-                isOpen ? "rotate-90" : ""
+                isOpen ? 'rotate-90' : ''
               }`}
               fill="none"
               viewBox="0 0 24 24"
@@ -180,8 +180,8 @@ function SidebarItem({
                     onClick={handleClick}
                     className={`block px-2 py-1.5 text-sm rounded-md ${
                       activeSection === child.anchor
-                        ? "text-indigo-600 bg-indigo-50 font-medium"
-                        : "text-gray-600 hover:bg-gray-50"
+                        ? 'text-indigo-600 bg-indigo-50 font-medium'
+                        : 'text-gray-600 hover:bg-gray-50'
                     }`}
                   >
                     {child.title}
@@ -197,8 +197,8 @@ function SidebarItem({
           onClick={handleClick}
           className={`block px-2 py-2 text-sm font-medium rounded-md ${
             isActive
-              ? "text-indigo-600 bg-indigo-50"
-              : "text-gray-700 hover:bg-gray-50"
+              ? 'text-indigo-600 bg-indigo-50'
+              : 'text-gray-700 hover:bg-gray-50'
           }`}
         >
           {link.title}

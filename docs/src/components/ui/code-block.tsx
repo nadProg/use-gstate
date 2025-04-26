@@ -1,4 +1,4 @@
-import { Highlight, themes } from "prism-react-renderer";
+import { Highlight, themes } from 'prism-react-renderer';
 
 type CodeBlockProps = {
   code: string;
@@ -27,8 +27,8 @@ export function CodeBlock({ code, language, filename }: CodeBlockProps) {
             style={{
               ...style,
               margin: 0,
-              fontSize: "0.9rem",
-              fontFamily: "monospace",
+              fontSize: '0.9rem',
+              fontFamily: 'monospace',
             }}
           >
             {tokens.map((line, i) => (

@@ -1,7 +1,7 @@
-import { ReactQueryExample } from "../../../../src/examples/react-query";
-import reactQueryExampleCode from "../../../../src/examples/react-query?raw";
-import { CodeBlock } from "../../components/ui/code-block";
-import { Subsection } from "../../components/ui/section";
+import { ReactQueryExample } from '../../../../src/examples/react-query';
+import reactQueryExampleCode from '../../../../src/examples/react-query?raw';
+import { CodeBlock } from '../../components/ui/code-block';
+import { Subsection } from '../../components/ui/section';
 
 export function ReactQueryIntegrationExample() {
   return (

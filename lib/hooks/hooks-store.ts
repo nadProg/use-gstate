@@ -1,10 +1,10 @@
-import { flushSync } from "react-dom";
-import { Bather, MicroTaskBather, TimerBather } from "../scheduler";
-import { shallowEqualArrays } from "../shallow-equal";
-import * as React from "react";
+import { flushSync } from 'react-dom';
+import { Bather, MicroTaskBather, TimerBather } from '../scheduler';
+import { shallowEqualArrays } from '../shallow-equal';
+import * as React from 'react';
 
 const applyAction = <T>(action: React.SetStateAction<T>, last: T) => {
-  if (typeof action === "function") {
+  if (typeof action === 'function') {
     const functionAction = action as (last: T) => T;
     return functionAction(last);
   } else {
@@ -15,14 +15,14 @@ const applyAction = <T>(action: React.SetStateAction<T>, last: T) => {
 type Effect = {
   fn: () => (() => void) | undefined;
   deps: unknown[];
-  type: "effect" | "layout-effect";
+  type: 'effect' | 'layout-effect';
 };
 
 type EffectState = {
-  __type: "effect";
+  __type: 'effect';
   clearFunction: () => void;
   deps: unknown[];
-  type: "effect" | "layout-effect";
+  type: 'effect' | 'layout-effect';
   effects: Effect[];
 };
 
@@ -40,7 +40,7 @@ export class HooksStore {
   constructor() {}
 
   getCurrent<T = unknown>(
-    initialState: T
+    initialState: T,
   ): [T, React.Dispatch<React.SetStateAction<T>>] {
     const currentIndex = this.currentIndex;
     let stateEntry = this.dataList[currentIndex];
@@ -62,31 +62,31 @@ export class HooksStore {
 
   scheduleEffect(effect: Effect) {
     const effectsState = this.getCurrent({
-      __type: "effect",
+      __type: 'effect',
       clearFunction: () => {},
-      deps: ["______def_____"],
+      deps: ['______def_____'],
       type: effect.type,
       effects: [],
     } as EffectState);
 
     effectsState[0].effects.push(effect);
 
-    if (effect.type === "layout-effect") {
+    if (effect.type === 'layout-effect') {
       this.layoutEffectsBather.schedule(() => {
         flushSync(() => {
-          this.runAllEffects("layout-effect");
+          this.runAllEffects('layout-effect');
         });
       });
     } else {
       this.effectsBather.schedule(() => {
-        this.runAllEffects("effect");
+        this.runAllEffects('effect');
       });
     }
   }
 
-  runAllEffects(type: "layout-effect" | "effect") {
+  runAllEffects(type: 'layout-effect' | 'effect') {
     this.dataList.forEach(([data]) => {
-      if (data.__type === "effect" && data.type === type) {
+      if (data.__type === 'effect' && data.type === type) {
         const effectState = data as EffectState;
 
         while (effectState.effects.length) {
@@ -105,7 +105,7 @@ export class HooksStore {
 
   destroy() {
     this.dataList.forEach(([data]) => {
-      if (data.__type === "effect") {
+      if (data.__type === 'effect') {
         const effectState = data as EffectState;
         effectState.clearFunction();
       }

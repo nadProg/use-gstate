@@ -1,16 +1,16 @@
-import { createGStore } from "../../lib";
-import { useState, useCallback, useRef } from "react";
+import { createGStore } from '../../lib';
+import { useState, useCallback, useRef } from 'react';
 
 // Create a global state
 const useGlobalState = createGStore(() => {
-  const [user, setUser] = useState({ name: "John", age: 30 });
-  const [settings, setSettings] = useState({ theme: "dark" });
+  const [user, setUser] = useState({ name: 'John', age: 30 });
+  const [settings, setSettings] = useState({ theme: 'dark' });
 
   const updateUser = useCallback((name: string, age: number) => {
     setUser({ name, age });
   }, []);
 
-  const updateTheme = useCallback((theme: "dark" | "light") => {
+  const updateTheme = useCallback((theme: 'dark' | 'light') => {
     setSettings((prev) => ({ ...prev, theme }));
   }, []);
 
@@ -50,13 +50,13 @@ export function UserNameDisplay() {
 
       <div className="mt-3 space-y-2">
         <button
-          onClick={() => updateUser("Jane", 28)}
+          onClick={() => updateUser('Jane', 28)}
           className="w-full px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
         >
           Change to Jane
         </button>
         <button
-          onClick={() => updateUser("John", 30)}
+          onClick={() => updateUser('John', 30)}
           className="w-full px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
         >
           Change to John
@@ -74,7 +74,7 @@ export function ThemeToggle() {
       theme: state.settings.theme,
       updateTheme: state.updateTheme,
     }),
-    "shallow"
+    'shallow',
   );
 
   const settingsRenderCount = useRef(0);
@@ -96,10 +96,10 @@ export function ThemeToggle() {
       </div>
 
       <button
-        onClick={() => updateTheme(theme === "dark" ? "light" : "dark")}
+        onClick={() => updateTheme(theme === 'dark' ? 'light' : 'dark')}
         className="w-full px-3 py-1.5 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700"
       >
-        Toggle theme ({theme === "dark" ? "light" : "dark"})
+        Toggle theme ({theme === 'dark' ? 'light' : 'dark'})
       </button>
     </div>
   );

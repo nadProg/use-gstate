@@ -1,7 +1,7 @@
-import { GlobalTodoList } from "../../../../src/examples/todo-list";
-import todoListExampleCode from "../../../../src/examples/todo-list?raw";
-import { CodeBlock } from "../../components/ui/code-block";
-import { Subsection } from "../../components/ui/section";
+import { GlobalTodoList } from '../../../../src/examples/todo-list';
+import todoListExampleCode from '../../../../src/examples/todo-list?raw';
+import { CodeBlock } from '../../components/ui/code-block';
+import { Subsection } from '../../components/ui/section';
 
 export function TodoListExample() {
   return (

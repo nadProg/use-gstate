@@ -1,7 +1,7 @@
-import { GlobalForm } from "../../../../src/examples/form";
-import formExampleCode from "../../../../src/examples/form?raw";
-import { CodeBlock } from "../../components/ui/code-block";
-import { Subsection } from "../../components/ui/section";
+import { GlobalForm } from '../../../../src/examples/form';
+import formExampleCode from '../../../../src/examples/form?raw';
+import { CodeBlock } from '../../components/ui/code-block';
+import { Subsection } from '../../components/ui/section';
 
 export function FormExample() {
   return (
@@ -16,11 +16,7 @@ export function FormExample() {
       </div>
 
       <h4 className="text-xl font-bold text-gray-800 mb-2">Code</h4>
-      <CodeBlock
-        language="tsx"
-        code={formExampleCode}
-        filename="form.tsx"
-      />
+      <CodeBlock language="tsx" code={formExampleCode} filename="form.tsx" />
     </Subsection>
   );
 }

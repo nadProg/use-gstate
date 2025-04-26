@@ -1,6 +1,6 @@
-import { CounterDisplay, GlobalCounter } from "./examples/counter";
-import { FormErrors, GlobalForm } from "./examples/form";
-import { GlobalTodoList } from "./examples/todo-list";
+import { CounterDisplay, GlobalCounter } from './examples/counter';
+import { FormErrors, GlobalForm } from './examples/form';
+import { GlobalTodoList } from './examples/todo-list';
 
 export function App() {
   return (

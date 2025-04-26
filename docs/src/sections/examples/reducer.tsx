@@ -1,7 +1,7 @@
-import { ReducerExample } from "../../../../src/examples/reducer";
-import reducerExampleCode from "../../../../src/examples/reducer?raw";
-import { CodeBlock } from "../../components/ui/code-block";
-import { Subsection } from "../../components/ui/section";
+import { ReducerExample } from '../../../../src/examples/reducer';
+import reducerExampleCode from '../../../../src/examples/reducer?raw';
+import { CodeBlock } from '../../components/ui/code-block';
+import { Subsection } from '../../components/ui/section';
 
 export function ReducerPatternExample() {
   return (

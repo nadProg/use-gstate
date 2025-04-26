@@ -1,8 +1,8 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import * as path from "path";
-import { fileURLToPath } from "url";
-import dts from "vite-plugin-dts";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+import dts from 'vite-plugin-dts';
 
 // Get dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -12,24 +12,24 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      tsconfigPath: "./tsconfig.app.json",
+      tsconfigPath: './tsconfig.app.json',
       rollupTypes: true,
     }),
   ],
   css: {
-    postcss: "./postcss.config.js",
+    postcss: './postcss.config.js',
   },
   build: {
     lib: {
-      entry: path.resolve(__dirname, "lib/index.ts"),
-      name: "create-gstore",
+      entry: path.resolve(__dirname, 'lib/index.ts'),
+      name: 'create-gstore',
       // the proper extensions will be added
-      fileName: "lib",
+      fileName: 'lib',
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ["react", "react-dom"],
+      external: ['react', 'react-dom'],
     },
   },
 });

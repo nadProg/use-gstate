@@ -1,5 +1,5 @@
-import { CodeBlock } from "../../components/ui/code-block";
-import { Subsection } from "../../components/ui/section";
+import { CodeBlock } from '../../components/ui/code-block';
+import { Subsection } from '../../components/ui/section';
 
 export function MethodsSection() {
   return (

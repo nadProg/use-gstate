@@ -1,7 +1,7 @@
-import { HooksContext } from ".";
-import { shallowEqualArrays } from "../shallow-equal";
+import { HooksContext } from '.';
+import { shallowEqualArrays } from '../shallow-equal';
 
-import * as React from "react";
+import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const ReactSharedInternals =
@@ -20,7 +20,7 @@ export class ReactHooksMock {
 
   private useReducer: typeof React.useReducer = (
     reducer: any,
-    initialState: any
+    initialState: any,
   ): [any, (action: any) => void] => {
     const [state, setState] = this.useState(initialState);
     const dispatch = this.useCallback((action: any) => {
@@ -54,21 +54,21 @@ export class ReactHooksMock {
   private useEffect: typeof React.useEffect = (fn: any, deps: any) => {
     const store = this.context.getTopState();
     store.next();
-    store.scheduleEffect({ fn, deps, type: "effect" });
+    store.scheduleEffect({ fn, deps, type: 'effect' });
   };
 
   private useLayoutEffect: typeof React.useEffect = (fn: any, deps: any) => {
     const store = this.context.getTopState();
     store.next();
-    store.scheduleEffect({ fn, deps, type: "layout-effect" });
+    store.scheduleEffect({ fn, deps, type: 'layout-effect' });
   };
 
   private useSyncExternalStore: typeof React.useSyncExternalStore = (
     subscribe: any,
     getSnapshot: any,
-    getServerSnapshot: any
+    getServerSnapshot: any,
   ) => {
-    if (typeof window === "undefined") {
+    if (typeof window === 'undefined') {
       return getServerSnapshot();
     }
 

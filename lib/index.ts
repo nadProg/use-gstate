@@ -1,9 +1,9 @@
-import { GStore, GStoreOptions } from "./store";
-import { SyncStoreListener } from "./sync-store";
+import { GStore, GStoreOptions } from './store';
+import { SyncStoreListener } from './sync-store';
 
 type GStoreHook<State> = {
   (): State;
-  <R>(select: (state: State) => R, mode?: "shallow" | "strict"): R;
+  <R>(select: (state: State) => R, mode?: 'shallow' | 'strict'): R;
 
   getState: () => State;
   subscribe: (callback: SyncStoreListener<State>) => () => void;
@@ -12,14 +12,14 @@ type GStoreHook<State> = {
 
 function createGStore<State>(
   fn: () => State,
-  options?: GStoreOptions
+  options?: GStoreOptions,
 ): GStoreHook<State>;
 function createGStore(stateFactory: any, storeOptions = {}) {
   const store = new GStore(stateFactory, storeOptions);
 
   function useStateHook(
     selector?: (state: any) => any,
-    mode?: "shallow" | "strict"
+    mode?: 'shallow' | 'strict',
   ) {
     return store.useReact(selector, mode);
   }

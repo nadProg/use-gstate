@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import { createGStore } from "../../lib";
-import "./examples.css";
+import { useCallback, useEffect, useState } from 'react';
+import { createGStore } from '../../lib';
+import './examples.css';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -21,7 +21,7 @@ const useTodoList = createGStore(() => {
   useEffect(() => {
     setIsLoading(true);
     const abortController = new AbortController();
-    fetch("http://jsonplaceholder.typicode.com/todos", {
+    fetch('http://jsonplaceholder.typicode.com/todos', {
       signal: abortController.signal,
     })
       .then((res) => res.json())
@@ -81,10 +81,10 @@ export function GlobalTodoList() {
           className="load-button"
         >
           {isLoading
-            ? "Loading..."
+            ? 'Loading...'
             : todos.length === 0
-            ? "Load Todos"
-            : "Load More"}
+              ? 'Load Todos'
+              : 'Load More'}
         </button>
       </div>
     </div>

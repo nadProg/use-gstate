@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 type SectionProps = {
   id: string;
@@ -7,7 +7,7 @@ type SectionProps = {
   className?: string;
 };
 
-export function Section({ id, title, children, className = "" }: SectionProps) {
+export function Section({ id, title, children, className = '' }: SectionProps) {
   return (
     <section className={`mb-16 ${className}`}>
       <h2 className="text-3xl font-bold text-gray-900 mb-6" id={id}>
@@ -29,7 +29,7 @@ export function Subsection({
   id,
   title,
   children,
-  className = "",
+  className = '',
 }: SubsectionProps) {
   return (
     <div className={`mb-10 ${className}`}>
