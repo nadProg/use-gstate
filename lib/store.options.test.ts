@@ -82,12 +82,45 @@ describe('GStore - GStoreOptions', () => {
     });
   });
 
-  describe.skip('onFirstSubscribed', () => {
-    test('calls onFirstSubscribed on first subscription', () => {});
+  describe('onFirstSubscribed', () => {
+    test('calls onFirstSubscribed on first subscription', () => {
+      const onFirstSubscribed = vi.fn();
+
+      const gStore = new GStore(stateFactoryStub, { onFirstSubscribed });
+
+      expect(onFirstSubscribed).not.toHaveBeenCalled();
+
+      gStore.subscribe(() => ({}));
+
+      expect(onFirstSubscribed).toHaveBeenCalledOnce();
+
+      gStore.subscribe(() => ({}));
+      gStore.subscribe(() => ({}));
+      gStore.subscribe(() => ({}));
+
+      expect(onFirstSubscribed).toHaveBeenCalledOnce();
+    });
   });
 
-  describe.skip('onAllUnsubscribed', () => {
-    test('calls onAllUnsubscribed when all subscribers are unsubscribed', () => {});
+  describe('onAllUnsubscribed', () => {
+    test('calls onAllUnsubscribed when all subscribers are unsubscribed', () => {
+      const onAllUnsubscribed = vi.fn();
+
+      const gStore = new GStore(stateFactoryStub, { onAllUnsubscribed });
+
+      const unsubscribeFirst = gStore.subscribe(() => ({}));
+      const unsubscribeSecond = gStore.subscribe(() => ({}));
+      const unsubscribeThird = gStore.subscribe(() => ({}));
+
+      unsubscribeFirst();
+      unsubscribeSecond();
+
+      expect(onAllUnsubscribed).not.toHaveBeenCalled();
+
+      unsubscribeThird();
+
+      expect(onAllUnsubscribed).toHaveBeenCalledOnce();
+    });
   });
 
   describe.skip('initialize option', () => {
