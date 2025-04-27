@@ -1,10 +1,10 @@
 import {
   GlobalCounter,
   CounterDisplay,
-} from '../../../../src/examples/counter';
-import counterExampleCode from '../../../../src/examples/counter?raw';
-import { CodeBlock } from '../../components/ui/code-block';
-import { Subsection } from '../../components/ui/section';
+} from "../../../../src/examples/counter";
+import counterExampleCode from "../../../../src/examples/counter?raw";
+import { CodeBlock } from "../../components/ui/code-block";
+import { Subsection } from "../../components/ui/section";
 
 export function CounterExample() {
   return (

@@ -1,10 +1,10 @@
-import { createGStore } from '../../lib';
+import { createGStore } from "../../lib";
 import {
   QueryClient,
   QueryClientProvider,
   useQuery,
-} from '@tanstack/react-query';
-import { useState } from 'react';
+} from "@tanstack/react-query";
+import { useState } from "react";
 
 // Create a QueryClient
 const queryClient = new QueryClient({
@@ -20,7 +20,7 @@ const queryClient = new QueryClient({
 const fetchPokemon = async (id: number) => {
   const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
   if (!response.ok) {
-    throw new Error('Network response was not ok');
+    throw new Error("Network response was not ok");
   }
   return response.json();
 };
@@ -32,7 +32,7 @@ const useGlobalPokemon = createGStore(() => {
 
   // React Query hook for data fetching
   const query = useQuery({
-    queryKey: ['pokemon', pokemonId],
+    queryKey: ["pokemon", pokemonId],
     queryFn: () => fetchPokemon(pokemonId),
   });
 

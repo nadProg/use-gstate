@@ -1,7 +1,7 @@
-import { GlobalForm } from '../../../../src/examples/form';
-import formExampleCode from '../../../../src/examples/form?raw';
-import { CodeBlock } from '../../components/ui/code-block';
-import { Subsection } from '../../components/ui/section';
+import { GlobalForm } from "../../../../src/examples/form";
+import formExampleCode from "../../../../src/examples/form?raw";
+import { CodeBlock } from "../../components/ui/code-block";
+import { Subsection } from "../../components/ui/section";
 
 export function FormExample() {
   return (
