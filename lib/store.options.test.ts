@@ -149,8 +149,57 @@ describe('GStore - GStoreOptions', () => {
     });
   });
 
-  describe.skip('destroy option', () => {
-    test('does not call destroy with destroy: "no"', () => {});
-    test('calls destroy with destroy: "on-all-unsubscribed" after all subscribers unsubscribe', () => {});
+  describe('destroy option', () => {
+    test('does not call destroy with destroy: "no"', () => {
+      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+
+      const gStore = new GStore(stateFactoryStub, { destroy: 'no' });
+
+      const unsubscribeFirst = gStore.subscribe(() => ({}));
+      const unsubscribeSecond = gStore.subscribe(() => ({}));
+      const unsubscribeThird = gStore.subscribe(() => ({}));
+
+      unsubscribeFirst();
+      unsubscribeSecond();
+      unsubscribeThird();
+
+      expect(destroy).not.toHaveBeenCalled();
+    });
+
+    test('does not call destroy by default', () => {
+      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+
+      const gStore = new GStore(stateFactoryStub);
+
+      const unsubscribeFirst = gStore.subscribe(() => ({}));
+      const unsubscribeSecond = gStore.subscribe(() => ({}));
+      const unsubscribeThird = gStore.subscribe(() => ({}));
+
+      unsubscribeFirst();
+      unsubscribeSecond();
+      unsubscribeThird();
+
+      expect(destroy).not.toHaveBeenCalled();
+    });
+
+    test('calls destroy with destroy: "on-all-unsubscribed" after all subscribers unsubscribe', () => {
+      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+
+      const gStore = new GStore(stateFactoryStub, {
+        destroy: 'on-all-unsubscribed',
+      });
+
+      const unsubscribeFirst = gStore.subscribe(() => ({}));
+      const unsubscribeSecond = gStore.subscribe(() => ({}));
+      const unsubscribeThird = gStore.subscribe(() => ({}));
+
+      unsubscribeFirst();
+      unsubscribeSecond();
+
+      expect(destroy).not.toHaveBeenCalled();
+
+      unsubscribeThird();
+      expect(destroy).toHaveBeenCalledOnce();
+    });
   });
 });
