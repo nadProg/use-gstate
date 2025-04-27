@@ -123,9 +123,30 @@ describe('GStore - GStoreOptions', () => {
     });
   });
 
-  describe.skip('initialize option', () => {
-    test('does not call initialize with "lazy" and no subscribers', () => {});
-    test('calls initialize with "eager" when store is created', () => {});
+  describe('initialize option', () => {
+    test('does not call initialize with "lazy"', () => {
+      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+
+      new GStore(stateFactoryStub, { initialize: 'lazy' });
+
+      expect(initialize).not.toHaveBeenCalled();
+    });
+
+    test('does not call initialize by default', () => {
+      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+
+      new GStore(stateFactoryStub);
+
+      expect(initialize).not.toHaveBeenCalled();
+    });
+
+    test('calls initialize with "eager" when store is created', () => {
+      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+
+      new GStore(stateFactoryStub, { initialize: 'eager' });
+
+      expect(initialize).toHaveBeenCalledOnce();
+    });
   });
 
   describe.skip('destroy option', () => {
