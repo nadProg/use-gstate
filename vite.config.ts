@@ -8,7 +8,7 @@ import dts from "vite-plugin-dts";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default defineConfig({
+export default defineConfig(() => ({
   plugins: [
     react(),
     dts({
@@ -37,4 +37,4 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./vitest.setup.ts"],
   },
-});
+}));
