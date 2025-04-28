@@ -89,8 +89,14 @@ export class GStore<T> {
     if (this.listeners.size === 1) {
       this.options?.onFirstSubscribed?.();
     }
+
     return () => {
-      this.listeners.delete(callback);
+      const isRemoved = this.listeners.delete(callback);
+
+      if (!isRemoved) {
+        return;
+      }
+
       this.options?.onUnsubscribed?.(this.listeners.size);
       if (this.listeners.size === 0) {
         this.options?.onAllUnsubscribed?.();
