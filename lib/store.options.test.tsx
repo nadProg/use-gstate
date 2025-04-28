@@ -167,27 +167,41 @@ describe('GStore - GStoreOptions', () => {
   });
 
   describe('initialize option', () => {
-    test('does not call initialize with "lazy" before useReact call', () => {
+    test('does not call initialize with "lazy" before getState call', () => {
+      const stateFactory = vi.fn();
       const initialize = vi.spyOn(GStore.prototype, 'initialize');
 
-      const gStore = new GStore(stateFactoryStub, { initialize: 'lazy' });
+      const gStore = new GStore(stateFactory, { initialize: 'lazy' });
 
       expect(initialize).not.toHaveBeenCalled();
+      expect(stateFactory).not.toHaveBeenCalled();
 
-      const TestComponent = () => {
-        gStore.useReact(() => null);
-        return null;
-      };
-
-      render(<TestComponent />);
+      gStore.getState();
 
       expect(initialize).toHaveBeenCalledOnce();
+      expect(stateFactory).toHaveBeenCalledOnce();
     });
 
-    test('"lazy" initialize by default', () => {
+    test('does not call initialize by default before getState call', () => {
+      const stateFactory = vi.fn();
       const initialize = vi.spyOn(GStore.prototype, 'initialize');
 
-      const gStore = new GStore(stateFactoryStub);
+      const gStore = new GStore(stateFactory);
+
+      expect(initialize).not.toHaveBeenCalled();
+      expect(stateFactory).not.toHaveBeenCalled();
+
+      gStore.getState();
+
+      expect(initialize).toHaveBeenCalledOnce();
+      expect(stateFactory).toHaveBeenCalledOnce();
+    });
+
+    test('does not call initialize with "lazy" before useReact call', () => {
+      const stateFactory = vi.fn();
+      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+
+      const gStore = new GStore(stateFactory, { initialize: 'lazy' });
 
       expect(initialize).not.toHaveBeenCalled();
 
@@ -199,14 +213,36 @@ describe('GStore - GStoreOptions', () => {
       render(<TestComponent />);
 
       expect(initialize).toHaveBeenCalledOnce();
+      expect(stateFactory).toHaveBeenCalledOnce();
+    });
+
+    test('does not call initialize by default before useReact call', () => {
+      const stateFactory = vi.fn();
+      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+
+      const gStore = new GStore(stateFactory);
+
+      expect(initialize).not.toHaveBeenCalled();
+
+      const TestComponent = () => {
+        gStore.useReact(() => null);
+        return null;
+      };
+
+      render(<TestComponent />);
+
+      expect(initialize).toHaveBeenCalledOnce();
+      expect(stateFactory).toHaveBeenCalledOnce();
     });
 
     test('calls initialize with "eager" when store is created', () => {
+      const stateFactory = vi.fn();
       const initialize = vi.spyOn(GStore.prototype, 'initialize');
 
-      new GStore(stateFactoryStub, { initialize: 'eager' });
+      new GStore(stateFactory, { initialize: 'eager' });
 
       expect(initialize).toHaveBeenCalledOnce();
+      expect(stateFactory).toHaveBeenCalledOnce();
     });
   });
 
