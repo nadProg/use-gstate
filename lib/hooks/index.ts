@@ -1,5 +1,5 @@
-import { HooksStore } from './hooks-store';
-import { ReactHooksMock } from './react-hooks';
+import { HooksStore } from "./hooks-store";
+import { ReactHooksMock } from "./react-hooks";
 
 export class HooksContext {
   stateStack: HooksStore[] = [];
@@ -10,7 +10,7 @@ export class HooksContext {
   getTopState() {
     const state = this.stateStack[this.stateStack.length - 1];
     if (!state) {
-      throw new Error('Use should run useG hooks only in createGStore context');
+      throw new Error("Use should run useG hooks only in createGStore context");
     }
     return state;
   }

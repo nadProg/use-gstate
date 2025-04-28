@@ -1,7 +1,7 @@
-import { useCallback } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { createGStore } from '../../lib';
-import './examples.css';
+import { useCallback } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { createGStore } from "../../lib";
+import "./examples.css";
 
 // Define form input types
 type Inputs = {
@@ -65,7 +65,7 @@ export function FormInput({
   label,
   placeholder,
 }: {
-  id: 'example' | 'exampleRequired';
+  id: "example" | "exampleRequired";
   label: string;
   placeholder: string;
 }) {
@@ -84,7 +84,7 @@ export function FormInputRequired({
   label,
   placeholder,
 }: {
-  id: 'example' | 'exampleRequired';
+  id: "example" | "exampleRequired";
   label: string;
   placeholder: string;
 }) {

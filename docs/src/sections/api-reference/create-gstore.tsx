@@ -1,5 +1,5 @@
-import { CodeBlock } from '../../components/ui/code-block';
-import { Subsection } from '../../components/ui/section';
+import { CodeBlock } from "../../components/ui/code-block";
+import { Subsection } from "../../components/ui/section";
 
 export function CreateGStoreSection() {
   return (
@@ -24,7 +24,7 @@ export function CreateGStoreSection() {
           <li>
             <code className="bg-gray-100 text-indigo-700 px-1 rounded">
               options
-            </code>{' '}
+            </code>{" "}
             (optional):
             <span className="ml-2">
               Configuration options for the global state.

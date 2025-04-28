@@ -1,4 +1,4 @@
-import { createGStore } from '../../lib';
+import { createGStore } from "../../lib";
 import {
   useCallback,
   useEffect,
@@ -6,8 +6,8 @@ import {
   useMemo,
   useRef,
   useState,
-} from 'react';
-import './examples.css';
+} from "react";
+import "./examples.css";
 
 const useGSyncCounter = createGStore(() => {
   const rerenderRef = useRef(0);
@@ -29,20 +29,20 @@ const useGSyncCounter = createGStore(() => {
   const memoCounter = useMemo(() => ({ counter }), [counter]);
 
   useEffect(() => {
-    console.log('effect2', memoCounter.counter);
+    console.log("effect2", memoCounter.counter);
 
     return () => {
-      console.log('unmount2', memoCounter.counter);
+      console.log("unmount2", memoCounter.counter);
     };
   }, [memoCounter]);
 
   useLayoutEffect(() => {
-    console.log('effect');
+    console.log("effect");
 
     increment();
 
     return () => {
-      console.log('unmount');
+      console.log("unmount");
     };
   }, [increment]);
 

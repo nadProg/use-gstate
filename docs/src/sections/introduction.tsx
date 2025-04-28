@@ -1,5 +1,5 @@
-import { CodeBlock } from '../components/ui/code-block';
-import { Section, Subsection } from '../components/ui/section';
+import { CodeBlock } from "../components/ui/code-block";
+import { Section, Subsection } from "../components/ui/section";
 
 export function Introduction() {
   return (
@@ -92,91 +92,91 @@ function CounterDisplay() {
               <tbody className="divide-y divide-gray-200">
                 {[
                   {
-                    hook: 'useState',
-                    status: { text: 'Full Support', color: 'green' },
-                    notes: 'Core functionality, fully supported',
+                    hook: "useState",
+                    status: { text: "Full Support", color: "green" },
+                    notes: "Core functionality, fully supported",
                   },
                   {
-                    hook: 'useRef',
-                    status: { text: 'Full Support', color: 'green' },
-                    notes: 'Fully supported for mutable references',
+                    hook: "useRef",
+                    status: { text: "Full Support", color: "green" },
+                    notes: "Fully supported for mutable references",
                   },
                   {
-                    hook: 'useMemo',
-                    status: { text: 'Full Support', color: 'green' },
-                    notes: 'Memoization works as expected',
+                    hook: "useMemo",
+                    status: { text: "Full Support", color: "green" },
+                    notes: "Memoization works as expected",
                   },
                   {
-                    hook: 'useCallback',
-                    status: { text: 'Full Support', color: 'green' },
-                    notes: 'Function memoization works as expected',
+                    hook: "useCallback",
+                    status: { text: "Full Support", color: "green" },
+                    notes: "Function memoization works as expected",
                   },
                   {
-                    hook: 'useEffect',
-                    status: { text: 'Full Support', color: 'green' },
-                    notes: 'Side effects work as expected',
+                    hook: "useEffect",
+                    status: { text: "Full Support", color: "green" },
+                    notes: "Side effects work as expected",
                   },
 
                   {
-                    hook: 'useLayoutEffect',
-                    status: { text: 'Full Support', color: 'green' },
-                    notes: 'Synchronous effects work as expected',
+                    hook: "useLayoutEffect",
+                    status: { text: "Full Support", color: "green" },
+                    notes: "Synchronous effects work as expected",
                   },
                   {
-                    hook: 'useSyncExternalStore',
-                    status: { text: 'Full Support', color: 'green' },
-                    notes: 'Used internally for state subscription',
+                    hook: "useSyncExternalStore",
+                    status: { text: "Full Support", color: "green" },
+                    notes: "Used internally for state subscription",
                   },
                   {
-                    hook: 'useContext',
-                    status: { text: 'Limited Support', color: 'yellow' },
+                    hook: "useContext",
+                    status: { text: "Limited Support", color: "yellow" },
                     notes:
-                      'Only works if state is initialized in a React component tree',
+                      "Only works if state is initialized in a React component tree",
                   },
                   {
-                    hook: 'useReducer',
-                    status: { text: 'Full Support', color: 'green' },
-                    notes: 'Fully supported for state with actions',
+                    hook: "useReducer",
+                    status: { text: "Full Support", color: "green" },
+                    notes: "Fully supported for state with actions",
                   },
                   {
-                    hook: 'useId',
-                    status: { text: 'Not Supported', color: 'red' },
-                    notes: 'Not currently implemented',
+                    hook: "useId",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
                   },
                   {
-                    hook: 'useTransition',
-                    status: { text: 'Not Supported', color: 'red' },
-                    notes: 'Not currently implemented',
+                    hook: "useTransition",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
                   },
                   {
-                    hook: 'useDeferredValue',
-                    status: { text: 'Not Supported', color: 'red' },
-                    notes: 'Not currently implemented',
+                    hook: "useDeferredValue",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
                   },
                   {
-                    hook: 'useFormStatus (React 19)',
-                    status: { text: 'Not Supported', color: 'red' },
-                    notes: 'Not currently implemented',
+                    hook: "useFormStatus (React 19)",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
                   },
                   {
-                    hook: 'useActionState (React 19)',
-                    status: { text: 'Not Supported', color: 'red' },
-                    notes: 'Not currently implemented',
+                    hook: "useActionState (React 19)",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
                   },
                   {
-                    hook: 'useOptimistic (React 19)',
-                    status: { text: 'Not Supported', color: 'red' },
-                    notes: 'Not currently implemented',
+                    hook: "useOptimistic (React 19)",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
                   },
                   {
-                    hook: 'use (React 19)',
-                    status: { text: 'Not Supported', color: 'red' },
-                    notes: 'Not currently implemented',
+                    hook: "use (React 19)",
+                    status: { text: "Not Supported", color: "red" },
+                    notes: "Not currently implemented",
                   },
                   {
-                    hook: 'Third-party hooks',
-                    status: { text: 'Generally Supported', color: 'yellow' },
-                    notes: 'Works if they use supported hooks internally',
+                    hook: "Third-party hooks",
+                    status: { text: "Generally Supported", color: "yellow" },
+                    notes: "Works if they use supported hooks internally",
                   },
                 ].map(({ hook, status, notes }) => (
                   <tr key={hook}>
@@ -185,11 +185,11 @@ function CounterDisplay() {
                     </td>
                     <td
                       className={`py-3 px-3 text-sm font-medium ${
-                        status.color === 'green'
-                          ? 'text-green-600'
-                          : status.color === 'yellow'
-                            ? 'text-yellow-600'
-                            : 'text-red-600'
+                        status.color === "green"
+                          ? "text-green-600"
+                          : status.color === "yellow"
+                            ? "text-yellow-600"
+                            : "text-red-600"
                       }`}
                     >
                       {status.text}
@@ -206,7 +206,7 @@ function CounterDisplay() {
           </h4>
           <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6">
             <p className="text-amber-700">
-              <span className="font-bold">Important:</span> The{' '}
+              <span className="font-bold">Important:</span> The{" "}
               <code className="bg-amber-100 px-1 rounded">useContext</code> hook
               has limited support in create-gstore
             </p>

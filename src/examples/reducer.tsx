@@ -1,5 +1,5 @@
-import { createGStore } from '../../lib';
-import { useReducer, useState } from 'react';
+import { createGStore } from "../../lib";
+import { useReducer, useState } from "react";
 
 // Define a reducer for todos
 type Todo = {
@@ -9,15 +9,15 @@ type Todo = {
 };
 
 type TodoAction =
-  | { type: 'ADD'; text: string }
-  | { type: 'TOGGLE'; id: number }
-  | { type: 'DELETE'; id: number }
-  | { type: 'CLEAR_COMPLETED' };
+  | { type: "ADD"; text: string }
+  | { type: "TOGGLE"; id: number }
+  | { type: "DELETE"; id: number }
+  | { type: "CLEAR_COMPLETED" };
 
 // Reducer function
 function todoReducer(state: Todo[], action: TodoAction): Todo[] {
   switch (action.type) {
-    case 'ADD':
+    case "ADD":
       return [
         ...state,
         {
@@ -26,13 +26,13 @@ function todoReducer(state: Todo[], action: TodoAction): Todo[] {
           completed: false,
         },
       ];
-    case 'TOGGLE':
+    case "TOGGLE":
       return state.map((todo) =>
         todo.id === action.id ? { ...todo, completed: !todo.completed } : todo,
       );
-    case 'DELETE':
+    case "DELETE":
       return state.filter((todo) => todo.id !== action.id);
-    case 'CLEAR_COMPLETED':
+    case "CLEAR_COMPLETED":
       return state.filter((todo) => !todo.completed);
     default:
       return state;
@@ -42,15 +42,15 @@ function todoReducer(state: Todo[], action: TodoAction): Todo[] {
 // Create global state with useReducer
 const useGlobalTodos = createGStore(() => {
   const [todos, dispatch] = useReducer(todoReducer, [
-    { id: 1, text: 'Learn create-gstore', completed: false },
-    { id: 2, text: 'Try useReducer', completed: false },
+    { id: 1, text: "Learn create-gstore", completed: false },
+    { id: 2, text: "Try useReducer", completed: false },
   ]);
 
   // Helper functions
-  const addTodo = (text: string) => dispatch({ type: 'ADD', text });
-  const toggleTodo = (id: number) => dispatch({ type: 'TOGGLE', id });
-  const deleteTodo = (id: number) => dispatch({ type: 'DELETE', id });
-  const clearCompleted = () => dispatch({ type: 'CLEAR_COMPLETED' });
+  const addTodo = (text: string) => dispatch({ type: "ADD", text });
+  const toggleTodo = (id: number) => dispatch({ type: "TOGGLE", id });
+  const deleteTodo = (id: number) => dispatch({ type: "DELETE", id });
+  const clearCompleted = () => dispatch({ type: "CLEAR_COMPLETED" });
 
   return {
     todos,
@@ -66,13 +66,13 @@ const useGlobalTodos = createGStore(() => {
 export function TodoReducerExample() {
   const { todos, addTodo, toggleTodo, deleteTodo, clearCompleted } =
     useGlobalTodos();
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue.trim()) {
       addTodo(inputValue);
-      setInputValue('');
+      setInputValue("");
     }
   };
 
@@ -111,7 +111,7 @@ export function TodoReducerExample() {
               />
               <span
                 className={`${
-                  todo.completed ? 'line-through text-gray-500' : ''
+                  todo.completed ? "line-through text-gray-500" : ""
                 }`}
               >
                 {todo.text}
@@ -152,7 +152,7 @@ export function TodoStats() {
       <p>Total: {todos.length} todos</p>
       <p>Completed: {completed}</p>
       <p>
-        Completion rate:{' '}
+        Completion rate:{" "}
         {todos.length ? Math.round((completed / todos.length) * 100) : 0}%
       </p>
     </div>
