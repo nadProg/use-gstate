@@ -38,8 +38,9 @@
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "check-types": "tsc --noEmit",
-    "test": "vitest",
-    "test:ui": "npm test -- --ui",
+    "test": "vitest --watch=false",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
     "preview": "vite preview",
     "docs": "vite vite --port=4001 --config vite.config.docs.ts",
     "prepublishOnly": "npm run build"
