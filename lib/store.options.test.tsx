@@ -247,7 +247,7 @@ describe('GStore - GStoreOptions', () => {
   });
 
   describe('destroy option', () => {
-    test('does not call destroy with destroy: "no"', () => {
+    test('does not call destroy with destroy: "no" after all subscribers unsubscribed', () => {
       const destroy = vi.spyOn(GStore.prototype, 'destroy');
 
       const gStore = new GStore(stateFactoryStub, { destroy: 'no' });
@@ -263,7 +263,7 @@ describe('GStore - GStoreOptions', () => {
       expect(destroy).not.toHaveBeenCalled();
     });
 
-    test('does not call destroy by default', () => {
+    test('does not call destroy by default after all subscribers unsubscribed', () => {
       const destroy = vi.spyOn(GStore.prototype, 'destroy');
 
       const gStore = new GStore(stateFactoryStub);
@@ -279,7 +279,7 @@ describe('GStore - GStoreOptions', () => {
       expect(destroy).not.toHaveBeenCalled();
     });
 
-    test('calls destroy with destroy: "on-all-unsubscribed" after all subscribers unsubscribe', () => {
+    test('calls destroy with destroy: "on-all-unsubscribed" after all subscribers unsubscribed', () => {
       const destroy = vi.spyOn(GStore.prototype, 'destroy');
 
       const gStore = new GStore(stateFactoryStub, {
@@ -297,6 +297,134 @@ describe('GStore - GStoreOptions', () => {
 
       unsubscribeThird();
       expect(destroy).toHaveBeenCalledOnce();
+    });
+
+    test('does not call destroy with destroy: "no" after all components unmounted', () => {
+      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+
+      const gStore = new GStore(stateFactoryStub, { destroy: 'no' });
+
+      const TestComponent = () => {
+        gStore.useReact(() => null);
+        return null;
+      };
+
+      const { unmount: unmountFirst } = render(<TestComponent />);
+      const { unmount: unmountSecond } = render(<TestComponent />);
+
+      unmountFirst();
+      unmountSecond();
+
+      expect(destroy).not.toHaveBeenCalled();
+    });
+
+    test('does not call destroy by default after all components unmounted', () => {
+      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+
+      const gStore = new GStore(stateFactoryStub);
+
+      const TestComponent = () => {
+        gStore.useReact(() => null);
+        return null;
+      };
+
+      const { unmount: unmountFirst } = render(<TestComponent />);
+      const { unmount: unmountSecond } = render(<TestComponent />);
+
+      unmountFirst();
+      unmountSecond();
+
+      expect(destroy).not.toHaveBeenCalled();
+    });
+
+    test('calls destroy with destroy: "on-all-unsubscribed" after all components unmounted', () => {
+      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+
+      const gStore = new GStore(stateFactoryStub, {
+        destroy: 'on-all-unsubscribed',
+      });
+
+      const TestComponent = () => {
+        gStore.useReact(() => null);
+        return null;
+      };
+
+      const { unmount: unmountFirst } = render(<TestComponent />);
+      const { unmount: unmountSecond } = render(<TestComponent />);
+
+      unmountFirst();
+
+      expect(destroy).not.toHaveBeenCalled();
+
+      unmountSecond();
+
+      expect(destroy).toHaveBeenCalledOnce();
+    });
+
+    test('reinitialize after destroying with "lazy" initialize option', () => {
+      const stateFactory = vi.fn();
+      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+
+      const gStore = new GStore(stateFactory, {
+        initialize: 'lazy',
+        destroy: 'on-all-unsubscribed',
+      });
+
+      const unsubscribe = gStore.subscribe(() => ({}));
+      gStore.getState();
+      gStore.getState();
+      gStore.getState();
+
+      expect(stateFactory).toHaveBeenCalledOnce();
+      expect(initialize).toHaveBeenCalledOnce();
+      expect(destroy).not.toHaveBeenCalled();
+
+      unsubscribe();
+
+      expect(destroy).toHaveBeenCalledOnce();
+      expect(stateFactory).toHaveBeenCalledOnce();
+      expect(initialize).toHaveBeenCalledOnce();
+
+      gStore.getState();
+      gStore.getState();
+      gStore.getState();
+
+      expect(destroy).toHaveBeenCalledOnce();
+      expect(stateFactory).toHaveBeenCalledTimes(2);
+      expect(initialize).toHaveBeenCalledTimes(2);
+    });
+
+    test('reinitialize after destroying with "eager" initialize option', () => {
+      const stateFactory = vi.fn();
+      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+
+      const gStore = new GStore(stateFactory, {
+        initialize: 'eager',
+        destroy: 'on-all-unsubscribed',
+      });
+
+      expect(stateFactory).toHaveBeenCalledOnce();
+      expect(initialize).toHaveBeenCalledOnce();
+
+      const unsubscribe = gStore.subscribe(() => ({}));
+
+      expect(destroy).not.toHaveBeenCalled();
+
+      unsubscribe();
+
+      expect(destroy).toHaveBeenCalledOnce();
+      expect(stateFactory).toHaveBeenCalledOnce();
+      expect(initialize).toHaveBeenCalledOnce();
+
+      gStore.getState();
+      gStore.getState();
+      gStore.getState();
+
+      expect(destroy).toHaveBeenCalledOnce();
+      expect(stateFactory).toHaveBeenCalledTimes(2);
+      expect(initialize).toHaveBeenCalledTimes(2);
     });
   });
 });
