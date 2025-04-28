@@ -20,7 +20,7 @@ export class ReactHooksMock {
 
   private useReducer: typeof React.useReducer = (
     reducer: any,
-    initialState: any
+    initialState: any,
   ): [any, (action: any) => void] => {
     const [state, setState] = this.useState(initialState);
     const dispatch = this.useCallback((action: any) => {
@@ -66,7 +66,7 @@ export class ReactHooksMock {
   private useSyncExternalStore: typeof React.useSyncExternalStore = (
     subscribe: any,
     getSnapshot: any,
-    getServerSnapshot: any
+    getServerSnapshot: any,
   ) => {
     if (typeof window === "undefined") {
       return getServerSnapshot();

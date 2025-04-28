@@ -47,9 +47,8 @@ export function SelectorsSection() {
                   previous selected state value
                 </td>
                 <td className="py-3 px-3 text-sm text-gray-500">
-                  Best for primitive values (strings, numbers, booleans) or
-                  when you're already returning a new reference when data
-                  changes
+                  Best for primitive values (strings, numbers, booleans) or when
+                  you're already returning a new reference when data changes
                 </td>
               </tr>
               <tr>
@@ -61,8 +60,8 @@ export function SelectorsSection() {
                   top-level property
                 </td>
                 <td className="py-3 px-3 text-sm text-gray-500">
-                  Best for objects or arrays when you want to detect changes
-                  to nested properties without creating new object references
+                  Best for objects or arrays when you want to detect changes to
+                  nested properties without creating new object references
                 </td>
               </tr>
             </tbody>
@@ -77,8 +76,8 @@ export function SelectorsSection() {
           <ul className="list-disc pl-5 mt-2 text-blue-700">
             <li>Your selectors return objects or arrays</li>
             <li>
-              You want to prevent unnecessary re-renders when unrelated parts
-              of the object change
+              You want to prevent unnecessary re-renders when unrelated parts of
+              the object change
             </li>
             <li>You're working with deeply nested state structures</li>
           </ul>

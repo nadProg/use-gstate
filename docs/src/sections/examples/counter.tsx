@@ -1,4 +1,7 @@
-import { GlobalCounter, CounterDisplay } from "../../../../src/examples/counter";
+import {
+  GlobalCounter,
+  CounterDisplay,
+} from "../../../../src/examples/counter";
 import counterExampleCode from "../../../../src/examples/counter?raw";
 import { CodeBlock } from "../../components/ui/code-block";
 import { Subsection } from "../../components/ui/section";
@@ -7,8 +10,7 @@ export function CounterExample() {
   return (
     <Subsection id="counter-example" title="Counter Example">
       <p className="mb-6 text-gray-600">
-        A simple counter example showing how to share state between
-        components.
+        A simple counter example showing how to share state between components.
       </p>
 
       <div className="mb-6">

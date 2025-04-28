@@ -40,7 +40,7 @@ export class HooksStore {
   constructor() {}
 
   getCurrent<T = unknown>(
-    initialState: T
+    initialState: T,
   ): [T, React.Dispatch<React.SetStateAction<T>>] {
     const currentIndex = this.currentIndex;
     let stateEntry = this.dataList[currentIndex];

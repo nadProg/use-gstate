@@ -16,11 +16,7 @@ export function FormExample() {
       </div>
 
       <h4 className="text-xl font-bold text-gray-800 mb-2">Code</h4>
-      <CodeBlock
-        language="tsx"
-        code={formExampleCode}
-        filename="form.tsx"
-      />
+      <CodeBlock language="tsx" code={formExampleCode} filename="form.tsx" />
     </Subsection>
   );
 }

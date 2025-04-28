@@ -7,8 +7,8 @@ export function SelectorPatternExample() {
   return (
     <Subsection id="selector-example" title="Selector Pattern Example">
       <p className="mb-6 text-gray-600">
-        Using selectors to optimize renders by selecting only what you need
-        from state.
+        Using selectors to optimize renders by selecting only what you need from
+        state.
       </p>
 
       <div className="mb-6">

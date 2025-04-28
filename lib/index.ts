@@ -12,14 +12,14 @@ type GStoreHook<State> = {
 
 function createGStore<State>(
   fn: () => State,
-  options?: GStoreOptions
+  options?: GStoreOptions,
 ): GStoreHook<State>;
 function createGStore(stateFactory: any, storeOptions = {}) {
   const store = new GStore(stateFactory, storeOptions);
 
   function useStateHook(
     selector?: (state: any) => any,
-    mode?: "shallow" | "strict"
+    mode?: "shallow" | "strict",
   ) {
     return store.useReact(selector, mode);
   }

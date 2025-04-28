@@ -188,8 +188,8 @@ function CounterDisplay() {
                         status.color === "green"
                           ? "text-green-600"
                           : status.color === "yellow"
-                          ? "text-yellow-600"
-                          : "text-red-600"
+                            ? "text-yellow-600"
+                            : "text-red-600"
                       }`}
                     >
                       {status.text}

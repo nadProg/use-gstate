@@ -22,7 +22,7 @@ export class GStore<T> {
 
   constructor(
     private stateFactory: () => T,
-    private options: GStoreOptions = {}
+    private options: GStoreOptions = {},
   ) {
     this.options.destroy ??= "no";
     this.options.initialize ??= "lazy";
@@ -35,13 +35,13 @@ export class GStore<T> {
   initialize() {
     const result = hooksContext.runInContext(
       () => this.stateFactory(),
-      this.hooksStore
+      this.hooksStore,
     );
 
     // Инициализируем стейт с результатом
     this.stateStore = new SyncStore(result);
     this.stateStore.subscribe((params) =>
-      this.listeners.forEach((listener) => listener(params))
+      this.listeners.forEach((listener) => listener(params)),
     );
 
     // Подбисываемся на изменения состояний
@@ -54,7 +54,7 @@ export class GStore<T> {
 
       const next = hooksContext.runInContext(
         () => this.stateFactory(),
-        this.hooksStore
+        this.hooksStore,
       );
 
       if (!compare(last, next)) {
@@ -103,7 +103,7 @@ export class GStore<T> {
 
   useReact = <Res = T>(
     selector = (state: T) => state as unknown as Res,
-    compareMode: "shallow" | "strict" = "strict"
+    compareMode: "shallow" | "strict" = "strict",
   ) => {
     const lastValue = React.useRef<Res | undefined>(undefined);
 
@@ -123,7 +123,7 @@ export class GStore<T> {
     return React.useSyncExternalStore(
       this.subscribe,
       () => selectorWithMode(this.getState()),
-      () => selectorWithMode(this.getState())
+      () => selectorWithMode(this.getState()),
     );
   };
 }

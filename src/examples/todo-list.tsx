@@ -83,8 +83,8 @@ export function GlobalTodoList() {
           {isLoading
             ? "Loading..."
             : todos.length === 0
-            ? "Load Todos"
-            : "Load More"}
+              ? "Load Todos"
+              : "Load More"}
         </button>
       </div>
     </div>

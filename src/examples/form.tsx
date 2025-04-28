@@ -19,7 +19,7 @@ const useGForm = createGStore(() => {
 
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     (data) => console.log(data),
-    []
+    [],
   );
 
   return {

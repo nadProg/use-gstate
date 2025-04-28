@@ -41,7 +41,7 @@ export function Sidebar({
         navigationLinks.forEach((link) => {
           if (link.children) {
             const childFound = link.children.some(
-              (child) => child.anchor === currentSection
+              (child) => child.anchor === currentSection,
             );
             if (childFound) {
               setOpenSections((prev) => ({

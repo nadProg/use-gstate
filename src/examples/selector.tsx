@@ -74,7 +74,7 @@ export function ThemeToggle() {
       theme: state.settings.theme,
       updateTheme: state.updateTheme,
     }),
-    "shallow"
+    "shallow",
   );
 
   const settingsRenderCount = useRef(0);
