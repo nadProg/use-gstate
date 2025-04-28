@@ -14,7 +14,7 @@ A lightweight, powerful state management library for React applications that all
 
 For complete documentation with interactive examples, visit:
 
-**[📚 create-gstore Documentation](https://create-gstore.netlify.app)**
+**[📚 create-gstore Documentation](https://evo-community.github.io/use-gstate/)**
 
 ## Installation
 
