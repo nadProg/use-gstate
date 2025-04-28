@@ -1,18 +1,18 @@
-import { render } from '@testing-library/react';
-import { describe, test, expect, vi } from 'vitest';
-import { GStore } from './store.ts';
+import { render } from "@testing-library/react";
+import { describe, test, expect, vi } from "vitest";
+import { GStore } from "./store.ts";
 
-describe('GStore - GStoreOptions', () => {
+describe("GStore - GStoreOptions", () => {
   const stateFactoryStub = () => ({});
 
-  test('create GStore', () => {
+  test("create GStore", () => {
     const store = new GStore(stateFactoryStub);
 
     expect(store).toBeDefined();
   });
 
-  describe('onSubscribed', () => {
-    test('calls onSubscribed when subscribed', () => {
+  describe("onSubscribed", () => {
+    test("calls onSubscribed when subscribed", () => {
       const onSubscribed = vi.fn();
 
       const gStore = new GStore(stateFactoryStub, { onSubscribed });
@@ -24,7 +24,7 @@ describe('GStore - GStoreOptions', () => {
       expect(onSubscribed).toHaveBeenCalledOnce();
     });
 
-    test('passes correct number of subscribers to onSubscribed', () => {
+    test("passes correct number of subscribers to onSubscribed", () => {
       const onSubscribed = vi.fn();
 
       const gStore = new GStore(stateFactoryStub, { onSubscribed });
@@ -44,8 +44,8 @@ describe('GStore - GStoreOptions', () => {
     });
   });
 
-  describe('onUnsubscribed', () => {
-    test('calls onUnsubscribed when unsubscribed', () => {
+  describe("onUnsubscribed", () => {
+    test("calls onUnsubscribed when unsubscribed", () => {
       const onUnsubscribed = vi.fn();
 
       const gStore = new GStore(stateFactoryStub, { onUnsubscribed });
@@ -59,7 +59,7 @@ describe('GStore - GStoreOptions', () => {
       expect(onUnsubscribed).toHaveBeenCalledOnce();
     });
 
-    test('passes correct number of subscribers to onUnsubscribed', () => {
+    test("passes correct number of subscribers to onUnsubscribed", () => {
       const onUnsubscribed = vi.fn();
 
       const gStore = new GStore(stateFactoryStub, { onUnsubscribed });
@@ -83,8 +83,8 @@ describe('GStore - GStoreOptions', () => {
     });
   });
 
-  describe('onFirstSubscribed', () => {
-    test('calls onFirstSubscribed on first subscription', () => {
+  describe("onFirstSubscribed", () => {
+    test("calls onFirstSubscribed on first subscription", () => {
       const onFirstSubscribed = vi.fn();
 
       const gStore = new GStore(stateFactoryStub, { onFirstSubscribed });
@@ -103,8 +103,8 @@ describe('GStore - GStoreOptions', () => {
     });
   });
 
-  describe('onAllUnsubscribed', () => {
-    test('calls onAllUnsubscribed when all subscribers are unsubscribed', () => {
+  describe("onAllUnsubscribed", () => {
+    test("calls onAllUnsubscribed when all subscribers are unsubscribed", () => {
       const onAllUnsubscribed = vi.fn();
 
       const gStore = new GStore(stateFactoryStub, { onAllUnsubscribed });
@@ -124,8 +124,8 @@ describe('GStore - GStoreOptions', () => {
     });
   });
 
-  describe('onSubscribed + onFirstSubscribed + onUnsubscribed + onAllUnsubscribed', () => {
-    test('should not affect together', () => {
+  describe("onSubscribed + onFirstSubscribed + onUnsubscribed + onAllUnsubscribed", () => {
+    test("should not affect together", () => {
       const onSubscribed = vi.fn();
       const onUnsubscribed = vi.fn();
       const onAllUnsubscribed = vi.fn();
@@ -166,12 +166,12 @@ describe('GStore - GStoreOptions', () => {
     });
   });
 
-  describe('initialize option', () => {
+  describe("initialize option", () => {
     test('does not call initialize with "lazy" before getState call', () => {
       const stateFactory = vi.fn();
-      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+      const initialize = vi.spyOn(GStore.prototype, "initialize");
 
-      const gStore = new GStore(stateFactory, { initialize: 'lazy' });
+      const gStore = new GStore(stateFactory, { initialize: "lazy" });
 
       expect(initialize).not.toHaveBeenCalled();
       expect(stateFactory).not.toHaveBeenCalled();
@@ -182,9 +182,9 @@ describe('GStore - GStoreOptions', () => {
       expect(stateFactory).toHaveBeenCalledOnce();
     });
 
-    test('does not call initialize by default before getState call', () => {
+    test("does not call initialize by default before getState call", () => {
       const stateFactory = vi.fn();
-      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+      const initialize = vi.spyOn(GStore.prototype, "initialize");
 
       const gStore = new GStore(stateFactory);
 
@@ -199,9 +199,9 @@ describe('GStore - GStoreOptions', () => {
 
     test('does not call initialize with "lazy" before useReact call', () => {
       const stateFactory = vi.fn();
-      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+      const initialize = vi.spyOn(GStore.prototype, "initialize");
 
-      const gStore = new GStore(stateFactory, { initialize: 'lazy' });
+      const gStore = new GStore(stateFactory, { initialize: "lazy" });
 
       expect(initialize).not.toHaveBeenCalled();
 
@@ -216,9 +216,9 @@ describe('GStore - GStoreOptions', () => {
       expect(stateFactory).toHaveBeenCalledOnce();
     });
 
-    test('does not call initialize by default before useReact call', () => {
+    test("does not call initialize by default before useReact call", () => {
       const stateFactory = vi.fn();
-      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+      const initialize = vi.spyOn(GStore.prototype, "initialize");
 
       const gStore = new GStore(stateFactory);
 
@@ -237,20 +237,20 @@ describe('GStore - GStoreOptions', () => {
 
     test('calls initialize with "eager" when store is created', () => {
       const stateFactory = vi.fn();
-      const initialize = vi.spyOn(GStore.prototype, 'initialize');
+      const initialize = vi.spyOn(GStore.prototype, "initialize");
 
-      new GStore(stateFactory, { initialize: 'eager' });
+      new GStore(stateFactory, { initialize: "eager" });
 
       expect(initialize).toHaveBeenCalledOnce();
       expect(stateFactory).toHaveBeenCalledOnce();
     });
   });
 
-  describe('destroy option', () => {
+  describe("destroy option", () => {
     test('does not call destroy with destroy: "no" after all subscribers unsubscribed', () => {
-      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+      const destroy = vi.spyOn(GStore.prototype, "destroy");
 
-      const gStore = new GStore(stateFactoryStub, { destroy: 'no' });
+      const gStore = new GStore(stateFactoryStub, { destroy: "no" });
 
       const unsubscribeFirst = gStore.subscribe(() => ({}));
       const unsubscribeSecond = gStore.subscribe(() => ({}));
@@ -263,8 +263,8 @@ describe('GStore - GStoreOptions', () => {
       expect(destroy).not.toHaveBeenCalled();
     });
 
-    test('does not call destroy by default after all subscribers unsubscribed', () => {
-      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+    test("does not call destroy by default after all subscribers unsubscribed", () => {
+      const destroy = vi.spyOn(GStore.prototype, "destroy");
 
       const gStore = new GStore(stateFactoryStub);
 
@@ -280,10 +280,10 @@ describe('GStore - GStoreOptions', () => {
     });
 
     test('calls destroy with destroy: "on-all-unsubscribed" after all subscribers unsubscribed', () => {
-      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+      const destroy = vi.spyOn(GStore.prototype, "destroy");
 
       const gStore = new GStore(stateFactoryStub, {
-        destroy: 'on-all-unsubscribed',
+        destroy: "on-all-unsubscribed",
       });
 
       const unsubscribeFirst = gStore.subscribe(() => ({}));
@@ -300,9 +300,9 @@ describe('GStore - GStoreOptions', () => {
     });
 
     test('does not call destroy with destroy: "no" after all components unmounted', () => {
-      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+      const destroy = vi.spyOn(GStore.prototype, "destroy");
 
-      const gStore = new GStore(stateFactoryStub, { destroy: 'no' });
+      const gStore = new GStore(stateFactoryStub, { destroy: "no" });
 
       const TestComponent = () => {
         gStore.useReact(() => null);
@@ -318,8 +318,8 @@ describe('GStore - GStoreOptions', () => {
       expect(destroy).not.toHaveBeenCalled();
     });
 
-    test('does not call destroy by default after all components unmounted', () => {
-      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+    test("does not call destroy by default after all components unmounted", () => {
+      const destroy = vi.spyOn(GStore.prototype, "destroy");
 
       const gStore = new GStore(stateFactoryStub);
 
@@ -338,10 +338,10 @@ describe('GStore - GStoreOptions', () => {
     });
 
     test('calls destroy with destroy: "on-all-unsubscribed" after all components unmounted', () => {
-      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+      const destroy = vi.spyOn(GStore.prototype, "destroy");
 
       const gStore = new GStore(stateFactoryStub, {
-        destroy: 'on-all-unsubscribed',
+        destroy: "on-all-unsubscribed",
       });
 
       const TestComponent = () => {
@@ -363,12 +363,12 @@ describe('GStore - GStoreOptions', () => {
 
     test('reinitialize after destroying with "lazy" initialize option', () => {
       const stateFactory = vi.fn();
-      const initialize = vi.spyOn(GStore.prototype, 'initialize');
-      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+      const initialize = vi.spyOn(GStore.prototype, "initialize");
+      const destroy = vi.spyOn(GStore.prototype, "destroy");
 
       const gStore = new GStore(stateFactory, {
-        initialize: 'lazy',
-        destroy: 'on-all-unsubscribed',
+        initialize: "lazy",
+        destroy: "on-all-unsubscribed",
       });
 
       const unsubscribe = gStore.subscribe(() => ({}));
@@ -397,12 +397,12 @@ describe('GStore - GStoreOptions', () => {
 
     test('reinitialize after destroying with "eager" initialize option', () => {
       const stateFactory = vi.fn();
-      const initialize = vi.spyOn(GStore.prototype, 'initialize');
-      const destroy = vi.spyOn(GStore.prototype, 'destroy');
+      const initialize = vi.spyOn(GStore.prototype, "initialize");
+      const destroy = vi.spyOn(GStore.prototype, "destroy");
 
       const gStore = new GStore(stateFactory, {
-        initialize: 'eager',
-        destroy: 'on-all-unsubscribed',
+        initialize: "eager",
+        destroy: "on-all-unsubscribed",
       });
 
       expect(stateFactory).toHaveBeenCalledOnce();
