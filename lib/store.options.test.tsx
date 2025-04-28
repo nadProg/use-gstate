@@ -59,6 +59,20 @@ describe("GStore - GStoreOptions", () => {
       expect(onUnsubscribed).toHaveBeenCalledOnce();
     });
 
+    test("calls onUnsubscribed once when multiple unsubscribed", () => {
+      const onUnsubscribed = vi.fn();
+
+      const gStore = new GStore(stateFactoryStub, { onUnsubscribed });
+
+      const unsubscribe = gStore.subscribe(() => ({}));
+
+      unsubscribe();
+      unsubscribe();
+      unsubscribe();
+
+      expect(onUnsubscribed).toHaveBeenCalledOnce();
+    });
+
     test("passes correct number of subscribers to onUnsubscribed", () => {
       const onUnsubscribed = vi.fn();
 
@@ -118,6 +132,25 @@ describe("GStore - GStoreOptions", () => {
 
       expect(onAllUnsubscribed).not.toHaveBeenCalled();
 
+      unsubscribeThird();
+
+      expect(onAllUnsubscribed).toHaveBeenCalledOnce();
+    });
+
+    test("calls onAllUnsubscribed once when all subscribers are unsubscribed", () => {
+      const onAllUnsubscribed = vi.fn();
+
+      const gStore = new GStore(stateFactoryStub, { onAllUnsubscribed });
+
+      const unsubscribeFirst = gStore.subscribe(() => ({}));
+      const unsubscribeSecond = gStore.subscribe(() => ({}));
+      const unsubscribeThird = gStore.subscribe(() => ({}));
+
+      unsubscribeFirst();
+      unsubscribeSecond();
+      unsubscribeThird();
+      unsubscribeFirst();
+      unsubscribeSecond();
       unsubscribeThird();
 
       expect(onAllUnsubscribed).toHaveBeenCalledOnce();
@@ -296,6 +329,27 @@ describe("GStore - GStoreOptions", () => {
       expect(destroy).not.toHaveBeenCalled();
 
       unsubscribeThird();
+      expect(destroy).toHaveBeenCalledOnce();
+    });
+
+    test('calls destroy once with destroy: "on-all-unsubscribed" after all subscribers unsubscribed', () => {
+      const destroy = vi.spyOn(GStore.prototype, "destroy");
+
+      const gStore = new GStore(stateFactoryStub, {
+        destroy: "on-all-unsubscribed",
+      });
+
+      const unsubscribeFirst = gStore.subscribe(() => ({}));
+      const unsubscribeSecond = gStore.subscribe(() => ({}));
+      const unsubscribeThird = gStore.subscribe(() => ({}));
+
+      unsubscribeFirst();
+      unsubscribeSecond();
+      unsubscribeThird();
+      unsubscribeFirst();
+      unsubscribeSecond();
+      unsubscribeThird();
+
       expect(destroy).toHaveBeenCalledOnce();
     });
 
