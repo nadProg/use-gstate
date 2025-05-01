@@ -3,7 +3,7 @@ import * as React from "react";
 import { hooksContext } from "./hooks";
 import { HooksStore } from "./hooks/hooks-store";
 import { shallowEqual } from "./shallow-equal";
-import { SyncStore, SyncStoreListener } from "./sync-store";
+import { MicroTaskBatcher } from "./scheduler";
 
 export type GStoreOptions = {
   onSubscribed?: (subscribers: number) => void;
@@ -14,11 +14,16 @@ export type GStoreOptions = {
   destroy?: "no" | "on-all-unsubscribed";
 };
 
+export type Listener = () => void;
+
 export class GStore<T> {
   private hooksStore = new HooksStore();
-  private unsubscribeHooksStore: () => void = () => {};
-  private stateStore: SyncStore<T> | undefined = undefined;
-  private listeners = new Set<SyncStoreListener<T>>();
+
+  private microTaskBatcher = new MicroTaskBatcher();
+
+  private isFresh = false;
+  private valueCache: T | undefined = undefined;
+  private listeners = new Set<Listener>();
 
   constructor(
     private stateFactory: () => T,
@@ -26,6 +31,7 @@ export class GStore<T> {
   ) {
     this.options.destroy ??= "no";
     this.options.initialize ??= "lazy";
+    this.subscribeToHooksStore();
 
     if (this.options.initialize === "eager") {
       this.initialize();
@@ -33,56 +39,32 @@ export class GStore<T> {
   }
 
   initialize() {
-    const result = hooksContext.runInContext(
-      () => this.stateFactory(),
-      this.hooksStore,
-    );
+    this.getState();
+  }
 
-    // Инициализируем стейт с результатом
-    this.stateStore = new SyncStore(result);
-    this.stateStore.subscribe((params) =>
-      this.listeners.forEach((listener) => listener(params)),
-    );
+  destroy() {
+    this.valueCache = undefined;
+    this.isFresh = false;
+    this.hooksStore.destroy();
+  }
 
-    // Подбисываемся на изменения состояний
-    this.unsubscribeHooksStore = this.hooksStore.addListener(() => {
-      if (!this.stateStore) {
-        throw new Error("State store is not initialized");
-      }
-
-      const last = this.stateStore.getValue();
-
-      const next = hooksContext.runInContext(
+  getState() {
+    if (this.isFresh) {
+      return this.valueCache!;
+    } else {
+      const result = hooksContext.runInContext(
         () => this.stateFactory(),
         this.hooksStore,
       );
 
-      if (!compare(last, next)) {
-        this.stateStore.setValue(next);
-      }
-    });
-  }
+      this.isFresh = true;
+      this.valueCache = result;
 
-  destroy() {
-    this.unsubscribeHooksStore();
-    this.stateStore = undefined;
-  }
-
-  getState() {
-    if (!this.stateStore) {
-      this.initialize();
+      return this.valueCache!;
     }
-    return this.stateStore!.getValue();
   }
 
-  setState(state: T) {
-    if (!this.stateStore) {
-      this.initialize();
-    }
-    this.stateStore!.setValue(state);
-  }
-
-  subscribe = (callback: SyncStoreListener<T>) => {
+  subscribe = (callback: Listener) => {
     this.listeners.add(callback);
     this.options?.onSubscribed?.(this.listeners.size);
 
@@ -132,6 +114,20 @@ export class GStore<T> {
       () => selectorWithMode(this.getState()),
     );
   };
+
+  private subscribeToHooksStore() {
+    this.hooksStore.addListener(() => {
+      this.isFresh = false;
+
+      this.microTaskBatcher.schedule(() => {
+        this.notify();
+      });
+    });
+  }
+
+  private notify() {
+    this.listeners.forEach((listener) => listener());
+  }
 }
 
 function compare<T>(a: T, b: T) {

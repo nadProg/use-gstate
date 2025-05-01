@@ -1,8 +1,8 @@
-export interface Bather {
+export interface Batcher {
   schedule(fn: () => void): void;
 }
 
-export class TimerBather implements Bather {
+export class TimerBatcher implements Batcher {
   private cb = () => {};
   private isScheduled: boolean = false;
 
@@ -17,13 +17,14 @@ export class TimerBather implements Bather {
   }
 }
 
-export class MicroTaskBather implements Bather {
+export class MicroTaskBatcher implements Batcher {
   private cb = () => {};
   private isScheduled: boolean = false;
 
   schedule(fn: () => void) {
     this.cb = fn;
     if (!this.isScheduled) {
+      this.isScheduled = true;
       queueMicrotask(() => {
         this.cb();
         this.isScheduled = false;

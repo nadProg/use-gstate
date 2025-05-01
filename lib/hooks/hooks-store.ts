@@ -1,5 +1,5 @@
 import { flushSync } from "react-dom";
-import { Bather, MicroTaskBather, TimerBather } from "../scheduler";
+import { Batcher, MicroTaskBatcher, TimerBatcher } from "../scheduler";
 import { shallowEqualArrays } from "../shallow-equal";
 import * as React from "react";
 
@@ -26,14 +26,16 @@ type EffectState = {
   effects: Effect[];
 };
 
+type DataList = Array<[any, React.Dispatch<React.SetStateAction<any>>]>;
+
 export class HooksStore {
   listeners = new Set<() => void>();
-  dataList = new Array(100);
-  effects: Effect[] = new Array(100);
+  dataList: DataList = new Array(30);
+  effects: Effect[] = new Array(30);
   currentIndex = -1;
 
-  private effectsBather: Bather = new TimerBather();
-  private layoutEffectsBather: Bather = new MicroTaskBather();
+  private effectsBatcher: Batcher = new TimerBatcher();
+  private layoutEffectsBatcher: Batcher = new MicroTaskBatcher();
 
   timeout: ReturnType<typeof setTimeout> | undefined = undefined;
 
@@ -49,8 +51,12 @@ export class HooksStore {
       stateEntry = [
         applyAction(initialState, undefined),
         (action: React.SetStateAction<T>) => {
+          const last = stateEntry[0];
           stateEntry[0] = applyAction(action, stateEntry[0]);
-          this.notifyListeners();
+          // If the state has changed, notify the listeners
+          if (last !== stateEntry[0]) {
+            this.notifyListeners();
+          }
         },
       ];
 
@@ -72,13 +78,13 @@ export class HooksStore {
     effectsState[0].effects.push(effect);
 
     if (effect.type === "layout-effect") {
-      this.layoutEffectsBather.schedule(() => {
+      this.layoutEffectsBatcher.schedule(() => {
         flushSync(() => {
           this.runAllEffects("layout-effect");
         });
       });
     } else {
-      this.effectsBather.schedule(() => {
+      this.effectsBatcher.schedule(() => {
         this.runAllEffects("effect");
       });
     }
@@ -123,9 +129,7 @@ export class HooksStore {
   }
 
   notifyListeners() {
-    this.layoutEffectsBather.schedule(() => {
-      this.listeners.forEach((cb) => cb());
-    });
+    this.listeners.forEach((cb) => cb());
   }
 
   addListener(cb: () => void) {
