@@ -39,4 +39,4 @@ function createGStore(stateFactory: any, storeOptions = {}) {
   return useStateHook;
 }
 
-export { createGStore, type GStoreOptions, type GStoreHook };
+export { createGStore, type GStoreOptions, type GStoreHook, GStore };
