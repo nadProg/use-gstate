@@ -55,13 +55,8 @@ This approach allows you to:
 1. **Optimize performance**: Components only re-render when the specific data they use changes
 2. **Separate concerns**: Components can access only the state they need
 3. **Simplify components**: No need to use `useMemo` or other optimization techniques
-   |
 
-This approach allows you to:
-
-1. **Optimize performance**: Components only re-render when the specific data they use changes
-2. **Separate concerns**: Components can access only the state they need
-3. **Simplify components**: No need to use `useMemo` or other optimization techniques
+More info about `createGStore` options [here](./GStoreOptions.md)
 
 ## Contributing
 
