@@ -6,6 +6,8 @@ import { userEvent } from "@testing-library/user-event";
 
 import { createGStore } from "../index";
 
+const increaseStateAction = (prevCounter: number) => prevCounter + 1;
+
 const createTestComponents = ({
   renderHook,
   destroy,
@@ -17,21 +19,13 @@ const createTestComponents = ({
     () => {
       const [counter, setCounter] = useState(0);
 
-      const increase = () => setCounter((prevCounter) => prevCounter + 1);
-
-      const reset = () => setCounter(0);
-
       const [user, setUser] = useState({ name: "John" });
-
-      const setUserName = (name: string) =>
-        setUser((prevUser) => ({ ...prevUser, name }));
 
       return {
         counter,
-        increase,
-        reset,
+        setCounter,
         user,
-        setUserName,
+        setUser,
       };
     },
     { destroy },
@@ -42,18 +36,25 @@ const createTestComponents = ({
 
     renderHook?.("counter-value");
 
-    return <div data-testid="counter-value">{counter}</div>;
+    return <div data-testid="counter-value">{String(counter)}</div>;
   };
 
-  const CounterIncreaseButton = () => {
-    const increase = useGStore(({ increase }) => increase);
+  const CounterActions = () => {
+    const setCounter = useGStore(({ setCounter }) => setCounter);
+    const increase = () => setCounter(increaseStateAction);
 
-    renderHook?.("increase-button");
+    renderHook?.("counter-actions");
 
     return (
-      <button typeof="button" data-testid="increase-button" onClick={increase}>
-        Increase
-      </button>
+      <div>
+        <button
+          typeof="button"
+          data-testid="increase-button"
+          onClick={increase}
+        >
+          Increase
+        </button>
+      </div>
     );
   };
 
@@ -62,7 +63,7 @@ const createTestComponents = ({
 
     return (
       <div data-testid={"counter"}>
-        <CounterIncreaseButton />
+        <CounterActions />
         <CounterValue />
       </div>
     );
@@ -93,7 +94,7 @@ const createTestComponents = ({
   };
 };
 
-describe("useState-based gStore behavior", () => {
+describe("Basic useGStore in component behavior based on useState only", () => {
   describe("Initial rendering behavior", () => {
     test("should render Counter component with initial state and child components", () => {
       const renderHook = vi.fn();
@@ -122,7 +123,7 @@ describe("useState-based gStore behavior", () => {
 
       expect(renderHook).toHaveBeenCalledWith("counter");
       expect(renderHook).toHaveBeenCalledWith("counter-value");
-      expect(renderHook).toHaveBeenCalledWith("increase-button");
+      expect(renderHook).toHaveBeenCalledWith("counter-actions");
       expect(renderHook).toHaveBeenCalledTimes(3);
     });
 
@@ -187,7 +188,7 @@ describe("useState-based gStore behavior", () => {
       const increaseButtonComponent = screen.getByTestId("increase-button");
 
       expect(renderHook).toHaveBeenCalledWith("counter");
-      expect(renderHook).toHaveBeenCalledWith("increase-button");
+      expect(renderHook).toHaveBeenCalledWith("counter-actions");
       expect(renderHook).toHaveBeenCalledWith("counter-value");
       expect(renderHook).toHaveBeenCalledWith("user");
       expect(renderHook).toHaveBeenCalledWith("username");
@@ -197,8 +198,7 @@ describe("useState-based gStore behavior", () => {
       await userEvent.click(increaseButtonComponent);
       await userEvent.click(increaseButtonComponent);
 
-      // +6 = 3 count updates + 3 non-memoized increase callbacks
-      expect(renderHook).toHaveBeenCalledTimes(11);
+      expect(renderHook).toHaveBeenCalledTimes(8);
     });
 
     test("should update state and trigger rerenders when state is modified outside components", async () => {
@@ -215,18 +215,23 @@ describe("useState-based gStore behavior", () => {
       const counterValueComponent = screen.getByTestId("counter-value");
 
       expect(renderHook).toHaveBeenCalledWith("counter");
-      expect(renderHook).toHaveBeenCalledWith("increase-button");
+      expect(renderHook).toHaveBeenCalledWith("counter-actions");
       expect(renderHook).toHaveBeenCalledWith("counter-value");
       expect(renderHook).toHaveBeenCalledWith("user");
       expect(renderHook).toHaveBeenCalledWith("username");
       expect(renderHook).toHaveBeenCalledTimes(5);
 
-      await act(async () => useGStore.getState().increase());
-      await act(async () => useGStore.getState().increase());
-      await act(async () => useGStore.getState().increase());
+      await act(async () =>
+        useGStore.getState().setCounter(increaseStateAction),
+      );
+      await act(async () =>
+        useGStore.getState().setCounter(increaseStateAction),
+      );
+      await act(async () =>
+        useGStore.getState().setCounter(increaseStateAction),
+      );
 
-      // +6 = 3 count updates + 3 non-memoized increase callbacks
-      expect(renderHook).toHaveBeenCalledTimes(11);
+      expect(renderHook).toHaveBeenCalledTimes(8);
       expect(counterValueComponent).toHaveTextContent("3");
     });
 
@@ -250,10 +255,9 @@ describe("useState-based gStore behavior", () => {
       expect(useGStore.getState()).toEqual(
         expect.objectContaining({
           counter: 3,
-          increase: expect.any(Function),
-          reset: expect.any(Function),
+          setCounter: expect.any(Function),
           user: { name: "John" },
-          setUserName: expect.any(Function),
+          setUser: expect.any(Function),
         }),
       );
     });

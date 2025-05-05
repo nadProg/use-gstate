@@ -6,7 +6,9 @@ import { userEvent } from "@testing-library/user-event";
 
 import { createGStore } from "../index";
 
-describe("useEffect-based gStore behavior", () => {
+const increaseStateAction = (prevCounter: number) => prevCounter + 1;
+
+describe("useEffect in useGStore", () => {
   describe("useEffect with dependencies", () => {
     const createTestComponents = ({
       renderHook,
@@ -25,17 +27,11 @@ describe("useEffect-based gStore behavior", () => {
         () => {
           const [counter, setCounter] = useState(0);
 
-          const increase = () => setCounter((prevCounter) => prevCounter + 1);
-
           const [user, setUser] = useState<{ name: string } | null | undefined>(
             {
               name: "John",
             },
           );
-
-          const resetUser = () => setUser({ name: "" });
-
-          const restoreUser = () => setUser({ name: "John" });
 
           useEffect(() => {
             effectHook?.(counter);
@@ -47,10 +43,9 @@ describe("useEffect-based gStore behavior", () => {
 
           return {
             counter,
-            increase,
+            setCounter,
             user,
-            resetUser,
-            restoreUser,
+            setUser,
           };
         },
         {
@@ -67,19 +62,23 @@ describe("useEffect-based gStore behavior", () => {
         return <div data-testid="counter-value">{counter}</div>;
       };
 
-      const CounterIncreaseButton = () => {
-        const increase = useGStore(({ increase }) => increase);
+      const CounterActions = () => {
+        const setCounter = useGStore(({ setCounter }) => setCounter);
 
-        renderHook?.("increase-button");
+        const increase = () => setCounter(increaseStateAction);
+
+        renderHook?.("counter-actions");
 
         return (
-          <button
-            typeof="button"
-            data-testid="increase-button"
-            onClick={increase}
-          >
-            Increase
-          </button>
+          <div>
+            <button
+              typeof="button"
+              data-testid="increase-button"
+              onClick={increase}
+            >
+              Increase
+            </button>
+          </div>
         );
       };
 
@@ -88,25 +87,45 @@ describe("useEffect-based gStore behavior", () => {
 
         return (
           <div data-testid={"counter"}>
-            <CounterIncreaseButton />
+            <CounterActions />
             <CounterValue />
           </div>
         );
       };
 
-      const ResetUserButton = () => {
-        const resetUser = useGStore(({ resetUser }) => resetUser);
+      const UserActions = () => {
+        const setUser = useGStore(({ setUser }) => setUser);
 
-        renderHook?.("reset-user-button");
+        const resetUsername = () => setUser({ name: "" });
+        const setUserNull = () => setUser(null);
+        const setUserUndefined = () => setUser(undefined);
+
+        renderHook?.("user-actions");
 
         return (
-          <button
-            typeof="button"
-            data-testid="reset-user-button"
-            onClick={resetUser}
-          >
-            Reset user
-          </button>
+          <div>
+            <button
+              typeof="button"
+              data-testid="reset-username-button"
+              onClick={resetUsername}
+            >
+              Reset username
+            </button>
+            <button
+              typeof="button"
+              data-testid="set-user-null-button"
+              onClick={setUserNull}
+            >
+              Set user "null"
+            </button>
+            <button
+              typeof="button"
+              data-testid="set-user-undefined-button"
+              onClick={setUserUndefined}
+            >
+              Set user "undefined"
+            </button>
+          </div>
         );
       };
 
@@ -124,7 +143,7 @@ describe("useEffect-based gStore behavior", () => {
         return (
           <div data-testid="user">
             <UserName />
-            <ResetUserButton />
+            <UserActions />
           </div>
         );
       };
@@ -346,7 +365,9 @@ describe("useEffect-based gStore behavior", () => {
 
         await new Promise((resolve) => setTimeout(resolve));
 
-        await act(async () => useGStore.getState().increase());
+        await act(async () =>
+          useGStore.getState().setCounter(increaseStateAction),
+        );
 
         await new Promise((resolve) => setTimeout(resolve));
 
@@ -358,8 +379,12 @@ describe("useEffect-based gStore behavior", () => {
 
         await new Promise((resolve) => setTimeout(resolve));
 
-        await act(async () => useGStore.getState().increase());
-        await act(async () => useGStore.getState().increase());
+        await act(async () =>
+          useGStore.getState().setCounter(increaseStateAction),
+        );
+        await act(async () =>
+          useGStore.getState().setCounter(increaseStateAction),
+        );
 
         await new Promise((resolve) => setTimeout(resolve));
 
@@ -390,10 +415,10 @@ describe("useEffect-based gStore behavior", () => {
           </div>,
         );
 
-        const resetUserButton = screen.getByTestId("reset-user-button");
+        const resetUserNameButton = screen.getByTestId("reset-username-button");
         const userNameComponent = screen.getByTestId("username");
 
-        expect(resetUserButton).toBeInTheDocument();
+        expect(resetUserNameButton).toBeInTheDocument();
         expect(userNameComponent).toBeInTheDocument();
         expect(userNameComponent).toHaveTextContent("John");
 
@@ -408,7 +433,7 @@ describe("useEffect-based gStore behavior", () => {
 
         await new Promise((resolve) => setTimeout(resolve));
 
-        await userEvent.click(resetUserButton);
+        await userEvent.click(resetUserNameButton);
 
         await new Promise((resolve) => setTimeout(resolve));
 
@@ -417,6 +442,104 @@ describe("useEffect-based gStore behavior", () => {
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectHook).toHaveBeenLastCalledWith(0);
         expect(effectCleanupHook).not.toHaveBeenCalled();
+      });
+
+      describe.skip("Handling nullish state updates", () => {
+        test("should not trigger effect or cleanup when setting state to null if the effect's dependencies remain unchanged", async () => {
+          const effectHook = vi.fn();
+          const effectCleanupHook = vi.fn();
+          const { Counter, User } = createTestComponents({
+            effectHook,
+            effectCleanupHook,
+          });
+
+          expect(effectHook).not.toHaveBeenCalled();
+          expect(effectCleanupHook).not.toHaveBeenCalled();
+
+          render(
+            <div>
+              <Counter />
+              <User />
+            </div>,
+          );
+
+          const setUserNullButton = screen.getByTestId("set-user-null-button");
+          const userNameComponent = screen.getByTestId("username");
+
+          expect(setUserNullButton).toBeInTheDocument();
+          expect(userNameComponent).toBeInTheDocument();
+          expect(userNameComponent).toHaveTextContent("John");
+
+          expect(effectHook).not.toHaveBeenCalled();
+          expect(effectCleanupHook).not.toHaveBeenCalled();
+
+          await new Promise((resolve) => setTimeout(resolve));
+
+          expect(effectHook).toHaveBeenCalledTimes(1);
+          expect(effectHook).toHaveBeenLastCalledWith(0);
+          expect(effectCleanupHook).not.toHaveBeenCalled();
+
+          await new Promise((resolve) => setTimeout(resolve));
+
+          await userEvent.click(setUserNullButton);
+
+          await new Promise((resolve) => setTimeout(resolve));
+
+          expect(userNameComponent).toHaveTextContent("");
+
+          expect(effectHook).toHaveBeenCalledTimes(1);
+          expect(effectHook).toHaveBeenLastCalledWith(0);
+          expect(effectCleanupHook).not.toHaveBeenCalled();
+        });
+
+        test("should not trigger effect or cleanup when setting state to undefined if the effect's dependencies remain unchanged", async () => {
+          const effectHook = vi.fn();
+          const effectCleanupHook = vi.fn();
+          const { Counter, User } = createTestComponents({
+            effectHook,
+            effectCleanupHook,
+          });
+
+          expect(effectHook).not.toHaveBeenCalled();
+          expect(effectCleanupHook).not.toHaveBeenCalled();
+
+          render(
+            <div>
+              <Counter />
+              <User />
+            </div>,
+          );
+
+          const setUserUndefinedButton = screen.getByTestId(
+            "set-user-undefined-button",
+          );
+          const userNameComponent = screen.getByTestId("username");
+
+          expect(setUserUndefinedButton).toBeInTheDocument();
+          expect(userNameComponent).toBeInTheDocument();
+          expect(userNameComponent).toHaveTextContent("John");
+
+          expect(effectHook).not.toHaveBeenCalled();
+          expect(effectCleanupHook).not.toHaveBeenCalled();
+
+          await new Promise((resolve) => setTimeout(resolve));
+
+          expect(effectHook).toHaveBeenCalledTimes(1);
+          expect(effectHook).toHaveBeenLastCalledWith(0);
+          expect(effectCleanupHook).not.toHaveBeenCalled();
+
+          await new Promise((resolve) => setTimeout(resolve));
+
+          await userEvent.click(setUserUndefinedButton);
+
+          await new Promise((resolve) => setTimeout(resolve));
+
+          expect(userNameComponent).toHaveTextContent("");
+
+          expect(effectHook).toHaveBeenCalledTimes(1);
+          expect(effectHook).toHaveBeenLastCalledWith(0);
+          expect(effectCleanupHook).not.toHaveBeenCalled();
+        });
       });
     });
   });
@@ -439,17 +562,11 @@ describe("useEffect-based gStore behavior", () => {
         () => {
           const [counter, setCounter] = useState(0);
 
-          const increase = () => setCounter((prevCounter) => prevCounter + 1);
-
           const [user, setUser] = useState<{ name: string } | null | undefined>(
             {
               name: "John",
             },
           );
-
-          const resetUser = () => setUser({ name: "" });
-
-          const restoreUser = () => setUser({ name: "John" });
 
           useEffect(() => {
             effectHook?.();
@@ -461,10 +578,9 @@ describe("useEffect-based gStore behavior", () => {
 
           return {
             counter,
-            increase,
+            setCounter,
             user,
-            resetUser,
-            restoreUser,
+            setUser,
           };
         },
         {
@@ -481,19 +597,23 @@ describe("useEffect-based gStore behavior", () => {
         return <div data-testid="counter-value">{counter}</div>;
       };
 
-      const CounterIncreaseButton = () => {
-        const increase = useGStore(({ increase }) => increase);
+      const CounterActions = () => {
+        const setCounter = useGStore(({ setCounter }) => setCounter);
 
-        renderHook?.("increase-button");
+        const increase = () => setCounter(increaseStateAction);
+
+        renderHook?.("counter-actions");
 
         return (
-          <button
-            typeof="button"
-            data-testid="increase-button"
-            onClick={increase}
-          >
-            Increase
-          </button>
+          <div>
+            <button
+              typeof="button"
+              data-testid="increase-button"
+              onClick={increase}
+            >
+              Increase
+            </button>
+          </div>
         );
       };
 
@@ -502,25 +622,29 @@ describe("useEffect-based gStore behavior", () => {
 
         return (
           <div data-testid={"counter"}>
-            <CounterIncreaseButton />
+            <CounterActions />
             <CounterValue />
           </div>
         );
       };
 
-      const ResetUserButton = () => {
-        const resetUser = useGStore(({ resetUser }) => resetUser);
+      const UserActions = () => {
+        const setUser = useGStore(({ setUser }) => setUser);
 
-        renderHook?.("reset-user-button");
+        const resetUserName = () => setUser({ name: "" });
+
+        renderHook?.("user-actions");
 
         return (
-          <button
-            typeof="button"
-            data-testid="reset-user-button"
-            onClick={resetUser}
-          >
-            Reset user
-          </button>
+          <div>
+            <button
+              typeof="button"
+              data-testid="reset-username-button"
+              onClick={resetUserName}
+            >
+              Reset username
+            </button>
+          </div>
         );
       };
 
@@ -538,7 +662,7 @@ describe("useEffect-based gStore behavior", () => {
         return (
           <div data-testid="user">
             <UserName />
-            <ResetUserButton />
+            <UserActions />
           </div>
         );
       };
@@ -691,17 +815,11 @@ describe("useEffect-based gStore behavior", () => {
         () => {
           const [counter, setCounter] = useState(0);
 
-          const increase = () => setCounter((prevCounter) => prevCounter + 1);
-
           const [user, setUser] = useState<{ name: string } | null | undefined>(
             {
               name: "John",
             },
           );
-
-          const resetUser = () => setUser({ name: "" });
-
-          const restoreUser = () => setUser({ name: "John" });
 
           useEffect(() => {
             effectHook?.();
@@ -713,10 +831,9 @@ describe("useEffect-based gStore behavior", () => {
 
           return {
             counter,
-            increase,
+            setCounter,
             user,
-            resetUser,
-            restoreUser,
+            setUser,
           };
         },
         {
@@ -733,19 +850,23 @@ describe("useEffect-based gStore behavior", () => {
         return <div data-testid="counter-value">{counter}</div>;
       };
 
-      const CounterIncreaseButton = () => {
-        const increase = useGStore(({ increase }) => increase);
+      const CounterActions = () => {
+        const setCounter = useGStore(({ setCounter }) => setCounter);
 
-        renderHook?.("increase-button");
+        const increase = () => setCounter(increaseStateAction);
+
+        renderHook?.("counter-actions");
 
         return (
-          <button
-            typeof="button"
-            data-testid="increase-button"
-            onClick={increase}
-          >
-            Increase
-          </button>
+          <div>
+            <button
+              typeof="button"
+              data-testid="increase-button"
+              onClick={increase}
+            >
+              Increase
+            </button>
+          </div>
         );
       };
 
@@ -754,25 +875,29 @@ describe("useEffect-based gStore behavior", () => {
 
         return (
           <div data-testid={"counter"}>
-            <CounterIncreaseButton />
             <CounterValue />
+            <CounterActions />
           </div>
         );
       };
 
-      const ResetUserButton = () => {
-        const resetUser = useGStore(({ resetUser }) => resetUser);
+      const UserActions = () => {
+        const setUser = useGStore(({ setUser }) => setUser);
 
-        renderHook?.("reset-user-button");
+        const resetUserName = () => setUser({ name: "" });
+
+        renderHook?.("user-actions");
 
         return (
-          <button
-            typeof="button"
-            data-testid="reset-user-button"
-            onClick={resetUser}
-          >
-            Reset user
-          </button>
+          <div>
+            <button
+              typeof="button"
+              data-testid="reset-user-button"
+              onClick={resetUserName}
+            >
+              Reset username
+            </button>
+          </div>
         );
       };
 
@@ -790,7 +915,7 @@ describe("useEffect-based gStore behavior", () => {
         return (
           <div data-testid="user">
             <UserName />
-            <ResetUserButton />
+            <UserActions />
           </div>
         );
       };
@@ -1001,7 +1126,9 @@ describe("useEffect-based gStore behavior", () => {
 
         await new Promise((resolve) => setTimeout(resolve));
 
-        await act(async () => useGStore.getState().increase());
+        await act(async () =>
+          useGStore.getState().setCounter(increaseStateAction),
+        );
 
         await new Promise((resolve) => setTimeout(resolve));
 
@@ -1011,8 +1138,12 @@ describe("useEffect-based gStore behavior", () => {
 
         await new Promise((resolve) => setTimeout(resolve));
 
-        await act(async () => useGStore.getState().increase());
-        await act(async () => useGStore.getState().increase());
+        await act(async () =>
+          useGStore.getState().setCounter(increaseStateAction),
+        );
+        await act(async () =>
+          useGStore.getState().setCounter(increaseStateAction),
+        );
 
         await new Promise((resolve) => setTimeout(resolve));
 
