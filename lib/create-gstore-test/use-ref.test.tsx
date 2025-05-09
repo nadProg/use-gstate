@@ -1,8 +1,8 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { act, render } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
-import { createGStore } from "../index";
 import { userEvent } from "@testing-library/user-event";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createGStore } from "../index";
 
 const nextTask = () => new Promise((resolve) => setTimeout(resolve));
 
@@ -406,6 +406,7 @@ describe("useRef in useGStore", () => {
           useLayoutEffect(() => {
             layoutEffectHook?.(inputRef.current);
             return () => {
+              /* eslint-disable-next-line react-hooks/exhaustive-deps */
               cleanupLayoutEffectHook?.(inputRef.current);
             };
           }, []);
@@ -413,6 +414,7 @@ describe("useRef in useGStore", () => {
           useEffect(() => {
             effectHook?.(inputRef.current);
             return () => {
+              /* eslint-disable-next-line react-hooks/exhaustive-deps */
               cleanupEffectHook?.(inputRef.current);
             };
           }, []);
