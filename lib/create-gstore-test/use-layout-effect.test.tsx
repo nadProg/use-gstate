@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import "@testing-library/jest-dom";
 import { describe, expect, vi, test } from "vitest";
 import { render, screen, act } from "@testing-library/react";
@@ -8,10 +8,12 @@ import { createGStore } from "../index";
 
 const increaseStateAction = (prevCounter: number) => prevCounter + 1;
 
+const nextMicrotask = () => Promise.resolve();
+
 const nextTask = () => new Promise((resolve) => setTimeout(resolve));
 
-describe("useEffect in useGStore", () => {
-  describe("useEffect with dependencies", () => {
+describe("useLayoutEffect in useGStore", () => {
+  describe("useLayoutEffect with dependencies", () => {
     const createTestComponents = ({
       renderHook,
       effectHook,
@@ -35,7 +37,7 @@ describe("useEffect in useGStore", () => {
             },
           );
 
-          useEffect(() => {
+          useLayoutEffect(() => {
             effectHook?.(counter);
 
             return () => {
@@ -179,6 +181,12 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
+        await nextMicrotask();
+
+        expect(effectHook).toHaveBeenCalledOnce();
+        expect(effectHook).toHaveBeenCalledWith(0);
+        expect(effectCleanupHook).not.toHaveBeenCalled();
+
         await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
@@ -206,6 +214,12 @@ describe("useEffect in useGStore", () => {
         );
 
         expect(effectHook).not.toHaveBeenCalled();
+        expect(effectCleanupHook).not.toHaveBeenCalled();
+
+        await nextMicrotask();
+
+        expect(effectHook).toHaveBeenCalledOnce();
+        expect(effectHook).toHaveBeenCalledWith(0);
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
         await nextTask();
@@ -238,9 +252,13 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         unmount();
+
+        expect(effectHook).toHaveBeenCalledOnce();
+        expect(effectHook).toHaveBeenCalledWith(0);
+        expect(effectCleanupHook).not.toHaveBeenCalled();
 
         await nextTask();
 
@@ -271,9 +289,14 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         unmount();
+
+        expect(effectHook).toHaveBeenCalledOnce();
+        expect(effectHook).toHaveBeenCalledWith(0);
+        expect(effectCleanupHook).toHaveBeenCalledOnce();
+        expect(effectCleanupHook).toHaveBeenCalledWith(0);
 
         await nextTask();
 
@@ -308,7 +331,7 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectHook).toHaveBeenLastCalledWith(0);
@@ -316,7 +339,7 @@ describe("useEffect in useGStore", () => {
 
         await userEvent.click(increaseCounterButton);
 
-        await nextTask();
+        await nextMicrotask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(1);
         expect(effectCleanupHook).toHaveBeenLastCalledWith(0);
@@ -324,12 +347,12 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).toHaveBeenCalledTimes(2);
         expect(effectHook).toHaveBeenLastCalledWith(1);
 
-        await nextTask();
+        await nextMicrotask();
 
         await userEvent.click(increaseCounterButton);
         await userEvent.click(increaseCounterButton);
 
-        await nextTask();
+        await nextMicrotask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(3);
         expect(effectCleanupHook).toHaveBeenLastCalledWith(2);
@@ -359,19 +382,19 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectHook).toHaveBeenLastCalledWith(0);
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         await act(async () =>
           useGStore.getState().setCounter(increaseStateAction),
         );
 
-        await nextTask();
+        await nextMicrotask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(1);
         expect(effectCleanupHook).toHaveBeenLastCalledWith(0);
@@ -379,7 +402,7 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).toHaveBeenCalledTimes(2);
         expect(effectHook).toHaveBeenLastCalledWith(1);
 
-        await nextTask();
+        await nextMicrotask();
 
         await act(async () =>
           useGStore.getState().setCounter(increaseStateAction),
@@ -388,7 +411,7 @@ describe("useEffect in useGStore", () => {
           useGStore.getState().setCounter(increaseStateAction),
         );
 
-        await nextTask();
+        await nextMicrotask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(3);
         expect(effectCleanupHook).toHaveBeenLastCalledWith(2);
@@ -427,17 +450,17 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectHook).toHaveBeenLastCalledWith(0);
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         await userEvent.click(resetUserNameButton);
 
-        await nextTask();
+        await nextMicrotask();
 
         expect(userNameComponent).toHaveTextContent("");
 
@@ -546,7 +569,7 @@ describe("useEffect in useGStore", () => {
     });
   });
 
-  describe("useEffect with empty dependencies array", () => {
+  describe("useLayoutEffect with empty dependencies array", () => {
     const createTestComponents = ({
       renderHook,
       effectHook,
@@ -570,7 +593,7 @@ describe("useEffect in useGStore", () => {
             },
           );
 
-          useEffect(() => {
+          useLayoutEffect(() => {
             effectHook?.();
 
             return () => {
@@ -698,6 +721,11 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
+        await nextMicrotask();
+
+        expect(effectHook).toHaveBeenCalledOnce();
+        expect(effectCleanupHook).not.toHaveBeenCalled();
+
         await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
@@ -724,6 +752,11 @@ describe("useEffect in useGStore", () => {
         );
 
         expect(effectHook).not.toHaveBeenCalled();
+        expect(effectCleanupHook).not.toHaveBeenCalled();
+
+        await nextMicrotask();
+
+        expect(effectHook).toHaveBeenCalledOnce();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
         await nextTask();
@@ -755,9 +788,12 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         unmount();
+
+        expect(effectHook).toHaveBeenCalledOnce();
+        expect(effectCleanupHook).not.toHaveBeenCalled();
 
         await nextTask();
 
@@ -787,9 +823,14 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         unmount();
+
+        await nextMicrotask();
+
+        expect(effectHook).toHaveBeenCalledOnce();
+        expect(effectCleanupHook).toHaveBeenCalledOnce();
 
         await nextTask();
 
@@ -799,7 +840,7 @@ describe("useEffect in useGStore", () => {
     });
   });
 
-  describe("useEffect without dependencies array", () => {
+  describe("useLayoutEffect without dependencies array", () => {
     const createTestComponents = ({
       renderHook,
       effectHook,
@@ -823,7 +864,7 @@ describe("useEffect in useGStore", () => {
             },
           );
 
-          useEffect(() => {
+          useLayoutEffect(() => {
             effectHook?.();
 
             return () => {
@@ -951,6 +992,11 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
+        await nextMicrotask();
+
+        expect(effectHook).toHaveBeenCalledOnce();
+        expect(effectCleanupHook).not.toHaveBeenCalled();
+
         await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
@@ -977,6 +1023,11 @@ describe("useEffect in useGStore", () => {
         );
 
         expect(effectHook).not.toHaveBeenCalled();
+        expect(effectCleanupHook).not.toHaveBeenCalled();
+
+        await nextMicrotask();
+
+        expect(effectHook).toHaveBeenCalledOnce();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
         await nextTask();
@@ -1008,9 +1059,12 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         unmount();
+
+        expect(effectHook).toHaveBeenCalledOnce();
+        expect(effectCleanupHook).not.toHaveBeenCalled();
 
         await nextTask();
 
@@ -1040,9 +1094,12 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await nextTask();
+        await nextMicrotask();
 
         unmount();
+
+        expect(effectHook).toHaveBeenCalledOnce();
+        expect(effectCleanupHook).toHaveBeenCalledOnce();
 
         await nextTask();
 
