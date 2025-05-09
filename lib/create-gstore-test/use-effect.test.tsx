@@ -8,6 +8,8 @@ import { createGStore } from "../index";
 
 const increaseStateAction = (prevCounter: number) => prevCounter + 1;
 
+const nextTask = () => new Promise((resolve) => setTimeout(resolve));
+
 describe("useEffect in useGStore", () => {
   describe("useEffect with dependencies", () => {
     const createTestComponents = ({
@@ -177,7 +179,7 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectHook).toHaveBeenCalledWith(0);
@@ -206,7 +208,7 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectHook).toHaveBeenCalledWith(0);
@@ -236,11 +238,11 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         unmount();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectHook).toHaveBeenCalledWith(0);
@@ -269,11 +271,11 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         unmount();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectHook).toHaveBeenCalledWith(0);
@@ -306,7 +308,7 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectHook).toHaveBeenLastCalledWith(0);
@@ -314,7 +316,7 @@ describe("useEffect in useGStore", () => {
 
         await userEvent.click(increaseCounterButton);
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(1);
         expect(effectCleanupHook).toHaveBeenLastCalledWith(0);
@@ -322,12 +324,12 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).toHaveBeenCalledTimes(2);
         expect(effectHook).toHaveBeenLastCalledWith(1);
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         await userEvent.click(increaseCounterButton);
         await userEvent.click(increaseCounterButton);
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(3);
         expect(effectCleanupHook).toHaveBeenLastCalledWith(2);
@@ -357,19 +359,19 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectHook).toHaveBeenLastCalledWith(0);
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         await act(async () =>
           useGStore.getState().setCounter(increaseStateAction),
         );
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(1);
         expect(effectCleanupHook).toHaveBeenLastCalledWith(0);
@@ -377,7 +379,7 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).toHaveBeenCalledTimes(2);
         expect(effectHook).toHaveBeenLastCalledWith(1);
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         await act(async () =>
           useGStore.getState().setCounter(increaseStateAction),
@@ -386,7 +388,7 @@ describe("useEffect in useGStore", () => {
           useGStore.getState().setCounter(increaseStateAction),
         );
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(3);
         expect(effectCleanupHook).toHaveBeenLastCalledWith(2);
@@ -425,17 +427,17 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectHook).toHaveBeenLastCalledWith(0);
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         await userEvent.click(resetUserNameButton);
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(userNameComponent).toHaveTextContent("");
 
@@ -473,17 +475,17 @@ describe("useEffect in useGStore", () => {
           expect(effectHook).not.toHaveBeenCalled();
           expect(effectCleanupHook).not.toHaveBeenCalled();
 
-          await new Promise((resolve) => setTimeout(resolve));
+          await nextTask();
 
           expect(effectHook).toHaveBeenCalledTimes(1);
           expect(effectHook).toHaveBeenLastCalledWith(0);
           expect(effectCleanupHook).not.toHaveBeenCalled();
 
-          await new Promise((resolve) => setTimeout(resolve));
+          await nextTask();
 
           await userEvent.click(setUserNullButton);
 
-          await new Promise((resolve) => setTimeout(resolve));
+          await nextTask();
 
           expect(userNameComponent).toHaveTextContent("");
 
@@ -522,17 +524,17 @@ describe("useEffect in useGStore", () => {
           expect(effectHook).not.toHaveBeenCalled();
           expect(effectCleanupHook).not.toHaveBeenCalled();
 
-          await new Promise((resolve) => setTimeout(resolve));
+          await nextTask();
 
           expect(effectHook).toHaveBeenCalledTimes(1);
           expect(effectHook).toHaveBeenLastCalledWith(0);
           expect(effectCleanupHook).not.toHaveBeenCalled();
 
-          await new Promise((resolve) => setTimeout(resolve));
+          await nextTask();
 
           await userEvent.click(setUserUndefinedButton);
 
-          await new Promise((resolve) => setTimeout(resolve));
+          await nextTask();
 
           expect(userNameComponent).toHaveTextContent("");
 
@@ -696,7 +698,7 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectCleanupHook).not.toHaveBeenCalled();
@@ -724,7 +726,7 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectCleanupHook).not.toHaveBeenCalled();
@@ -753,11 +755,11 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         unmount();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectCleanupHook).not.toHaveBeenCalled();
@@ -785,11 +787,11 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         unmount();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectCleanupHook).toHaveBeenCalledOnce();
@@ -949,7 +951,7 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectCleanupHook).not.toHaveBeenCalled();
@@ -977,7 +979,7 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectCleanupHook).not.toHaveBeenCalled();
@@ -1006,11 +1008,11 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         unmount();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectCleanupHook).not.toHaveBeenCalled();
@@ -1038,11 +1040,11 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         unmount();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledOnce();
         expect(effectCleanupHook).toHaveBeenCalledOnce();
@@ -1073,25 +1075,25 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
         await userEvent.click(increaseCounterButton);
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(1);
 
         expect(effectHook).toHaveBeenCalledTimes(2);
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         await userEvent.click(increaseCounterButton);
         await userEvent.click(increaseCounterButton);
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(3);
 
@@ -1119,24 +1121,24 @@ describe("useEffect in useGStore", () => {
         expect(effectHook).not.toHaveBeenCalled();
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectCleanupHook).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         await act(async () =>
           useGStore.getState().setCounter(increaseStateAction),
         );
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(1);
 
         expect(effectHook).toHaveBeenCalledTimes(2);
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         await act(async () =>
           useGStore.getState().setCounter(increaseStateAction),
@@ -1145,7 +1147,7 @@ describe("useEffect in useGStore", () => {
           useGStore.getState().setCounter(increaseStateAction),
         );
 
-        await new Promise((resolve) => setTimeout(resolve));
+        await nextTask();
 
         expect(effectCleanupHook).toHaveBeenCalledTimes(3);
 
