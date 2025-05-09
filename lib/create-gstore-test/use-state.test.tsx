@@ -342,3 +342,29 @@ describe("Basic useGStore in component behavior based on useState only", () => {
     });
   });
 });
+
+describe("Support of init function in useState", () => {
+  test("Should handle init function", () => {
+    const createState = () => 1;
+    const useGStore = createGStore(() => {
+      const [counter, setCounter] = useState(createState);
+
+      return {
+        counter,
+        setCounter,
+      };
+    });
+
+    expect(useGStore.getState()).toEqual({
+      counter: 1,
+      setCounter: expect.any(Function),
+    });
+
+    useGStore.getState().setCounter(2);
+
+    expect(useGStore.getState()).toEqual({
+      counter: 2,
+      setCounter: expect.any(Function),
+    });
+  });
+});
