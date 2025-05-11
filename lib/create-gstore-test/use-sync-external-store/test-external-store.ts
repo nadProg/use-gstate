@@ -1,8 +1,8 @@
-export class TestExternalStore {
+export class TestExternalStore<S> {
   private listeners: (() => void)[] = [];
-  private state: number;
+  private state: S;
 
-  constructor(initialState: number = 0) {
+  constructor(initialState: S) {
     this.state = initialState;
   }
 
@@ -10,7 +10,7 @@ export class TestExternalStore {
     return this.state;
   }
 
-  setState(next: number) {
+  setState(next: S) {
     this.state = next;
     this.emit();
   }
