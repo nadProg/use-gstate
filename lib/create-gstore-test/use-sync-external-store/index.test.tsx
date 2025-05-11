@@ -1,5 +1,6 @@
 import { act, render } from "@testing-library/react";
 import { useCallback, useState, useSyncExternalStore } from "react";
+import { renderToString } from "react-dom/server";
 import { nextTask } from "../lib";
 import { createGStore } from "../../index";
 
@@ -189,9 +190,81 @@ describe("useSyncExternalStore in useGStore", () => {
       expect(getServerSnapshot).toHaveBeenCalledTimes(0);
     });
 
-    test.todo("Check server snapshot");
+    test("Should get server snapshot when there's no window in the environment", async () => {
+      const originalWindow = globalThis.window;
 
-    test.todo("Check hydration");
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        delete globalThis.window;
+
+        const clientSnapshot = {
+          value: "ssr",
+        };
+        const serverSnapshot = {
+          value: "ssr",
+        };
+        const subscribe = vi.fn(() => () => null);
+        const getSnapshot = vi.fn(() => clientSnapshot);
+        const getServerSnapshot = vi.fn(() => serverSnapshot);
+
+        const { Snapshot } = createTestStore({
+          subscribe,
+          getSnapshot,
+          getServerSnapshot,
+        });
+
+        const serverHtml = renderToString(<Snapshot />);
+
+        expect(serverHtml).toBe('<div data-testid="snapshot-value">ssr</div>');
+        expect(getSnapshot).not.toHaveBeenCalled();
+        expect(getServerSnapshot).toHaveBeenCalledOnce();
+      } finally {
+        globalThis.window = originalWindow;
+      }
+    });
+
+    test("Support hydration behavior after server rendering", async () => {
+      const originalWindow = globalThis.window;
+
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        delete globalThis.window;
+
+        const clientSnapshot = {
+          value: "ssr",
+        };
+        const serverSnapshot = {
+          value: "ssr",
+        };
+        const subscribe = vi.fn(() => () => null);
+        const getSnapshot = vi.fn(() => clientSnapshot);
+        const getServerSnapshot = vi.fn(() => serverSnapshot);
+
+        const { Snapshot } = createTestStore({
+          subscribe,
+          getSnapshot,
+          getServerSnapshot,
+        });
+
+        const serverSnapshotHtml = renderToString(<Snapshot />);
+
+        globalThis.window = originalWindow;
+
+        const container = document.createElement("div");
+        container.innerHTML = serverSnapshotHtml;
+
+        const { getByTestId } = render(<Snapshot />, {
+          container,
+          hydrate: true,
+        });
+
+        expect(getByTestId("snapshot-value")).toHaveTextContent("ssr");
+      } finally {
+        globalThis.window = originalWindow;
+      }
+    });
   });
 
   describe("Test with TestExternalStore", () => {
