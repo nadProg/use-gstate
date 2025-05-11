@@ -1,7 +1,12 @@
 import { useCallback, useState } from "react";
-import { render } from "@testing-library/react";
+import { cleanup, render } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createGStore } from "../index";
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("useCallback in useGStore", () => {
   describe("non-memoized callback", () => {

@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { act } from "@testing-library/react";
+import { act, cleanup } from "@testing-library/react";
 import { createGStore } from "../index";
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 const createTestGStore = () =>
   createGStore(() => {

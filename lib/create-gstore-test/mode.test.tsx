@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { act, render } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 import { createGStore } from "../index";
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("useGStore mode", () => {
   describe("strict mode by default", () => {

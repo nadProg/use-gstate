@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { userEvent } from "@testing-library/user-event";
-import { render, screen, act } from "@testing-library/react";
+import { render, screen, act, cleanup } from "@testing-library/react";
 
 import { createGStore } from "../index";
 
@@ -91,6 +91,11 @@ const createTestComponents = ({
     useGStore,
   };
 };
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("Basic useGStore in component behavior based on useState only", () => {
   describe("Initial rendering behavior", () => {

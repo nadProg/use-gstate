@@ -6,9 +6,14 @@ import {
   useContext,
   useState,
 } from "react";
-import { act, render } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { createGStore } from "../index";
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("useContext in useGStore", () => {
   const createTestStore = () => {

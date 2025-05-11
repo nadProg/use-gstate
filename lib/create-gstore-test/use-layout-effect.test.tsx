@@ -1,14 +1,15 @@
 import { useLayoutEffect, useState } from "react";
 import { userEvent } from "@testing-library/user-event";
-import { render, screen, act } from "@testing-library/react";
-
+import { render, screen, act, cleanup } from "@testing-library/react";
+import { nextTask, nextMicrotask } from "./lib";
 import { createGStore } from "../index";
 
 const increaseStateAction = (prevCounter: number) => prevCounter + 1;
 
-const nextMicrotask = () => Promise.resolve();
-
-const nextTask = () => new Promise((resolve) => setTimeout(resolve));
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("useLayoutEffect in useGStore", () => {
   describe("useLayoutEffect with dependencies", () => {

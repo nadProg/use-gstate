@@ -1,11 +1,13 @@
-import { act, render } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { act, cleanup, render } from "@testing-library/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { nextTask, nextMicrotask } from "./lib";
 import { createGStore } from "../index";
 
-const nextTask = () => new Promise((resolve) => setTimeout(resolve));
-
-const nextMicrotask = () => Promise.resolve();
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("useRef in useGStore", () => {
   describe("Basic behavior with primitive value in ref object", () => {

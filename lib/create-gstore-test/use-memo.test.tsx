@@ -1,7 +1,12 @@
 import { useMemo, useState } from "react";
-import { render } from "@testing-library/react";
+import { cleanup, render } from "@testing-library/react";
 import { createGStore } from "../index";
 import { userEvent } from "@testing-library/user-event";
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("useMemo in useGStore", () => {
   describe("non-memoized object", () => {

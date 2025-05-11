@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 
 import { createGStore } from "../index";
@@ -28,6 +28,11 @@ const reducer = (
     }
   }
 };
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("useReducer in useGStore", () => {
   describe("Basic behavior", () => {
