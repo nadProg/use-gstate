@@ -440,7 +440,7 @@ describe("useEffect in useGStore", () => {
 
         await nextTask();
 
-        expect(userNameComponent).toHaveTextContent("");
+        expect(userNameComponent).toBeEmptyDOMElement();
 
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectHook).toHaveBeenLastCalledWith(0);
@@ -488,7 +488,7 @@ describe("useEffect in useGStore", () => {
 
           await nextTask();
 
-          expect(userNameComponent).toHaveTextContent("");
+          expect(userNameComponent).toBeEmptyDOMElement();
 
           expect(effectHook).toHaveBeenCalledTimes(1);
           expect(effectHook).toHaveBeenLastCalledWith(0);
@@ -537,7 +537,7 @@ describe("useEffect in useGStore", () => {
 
           await nextTask();
 
-          expect(userNameComponent).toHaveTextContent("");
+          expect(userNameComponent).toBeEmptyDOMElement();
 
           expect(effectHook).toHaveBeenCalledTimes(1);
           expect(effectHook).toHaveBeenLastCalledWith(0);

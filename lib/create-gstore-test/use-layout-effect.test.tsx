@@ -461,7 +461,7 @@ describe("useLayoutEffect in useGStore", () => {
 
         await nextMicrotask();
 
-        expect(userNameComponent).toHaveTextContent("");
+        expect(userNameComponent).toBeEmptyDOMElement();
 
         expect(effectHook).toHaveBeenCalledTimes(1);
         expect(effectHook).toHaveBeenLastCalledWith(0);
@@ -509,7 +509,7 @@ describe("useLayoutEffect in useGStore", () => {
 
           await nextTask();
 
-          expect(userNameComponent).toHaveTextContent("");
+          expect(userNameComponent).toBeEmptyDOMElement();
 
           expect(effectHook).toHaveBeenCalledTimes(1);
           expect(effectHook).toHaveBeenLastCalledWith(0);
@@ -558,7 +558,7 @@ describe("useLayoutEffect in useGStore", () => {
 
           await nextTask();
 
-          expect(userNameComponent).toHaveTextContent("");
+          expect(userNameComponent).toBeEmptyDOMElement();
 
           expect(effectHook).toHaveBeenCalledTimes(1);
           expect(effectHook).toHaveBeenLastCalledWith(0);
