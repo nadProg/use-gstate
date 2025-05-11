@@ -1,5 +1,4 @@
 import { render } from "@testing-library/react";
-import { describe, test, expect, vi } from "vitest";
 import { GStore } from "./store.ts";
 
 describe("GStore - Configuration Options", () => {

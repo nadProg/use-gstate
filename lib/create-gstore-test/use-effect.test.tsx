@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import "@testing-library/jest-dom";
-import { describe, expect, vi, test } from "vitest";
-import { render, screen, act } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { render, screen, act } from "@testing-library/react";
 
 import { createGStore } from "../index";
 
