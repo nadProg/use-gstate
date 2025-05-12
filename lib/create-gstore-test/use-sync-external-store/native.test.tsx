@@ -1,9 +1,14 @@
 import { useSyncExternalStore } from "react";
-import { act, getByTestId, render } from "@testing-library/react";
+import { act, cleanup, getByTestId, render } from "@testing-library/react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { createContainer, nextTask } from "../lib";
 import { TestExternalStore } from "./test-external-store.ts";
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("Native useSyncExternalStore subscription and snapshot behavior", () => {
   test("calls subscribe and getSnapshot on client, not getServerSnapshot, and renders value", () => {

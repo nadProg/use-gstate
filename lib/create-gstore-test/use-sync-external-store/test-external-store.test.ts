@@ -1,5 +1,9 @@
 import { TestExternalStore } from "./test-external-store";
 
+afterEach(() => {
+  vi.clearAllMocks();
+});
+
 describe("TestExternalStore", () => {
   test("should return initial state", () => {
     const store = new TestExternalStore(5);

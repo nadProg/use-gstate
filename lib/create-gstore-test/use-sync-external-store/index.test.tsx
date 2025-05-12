@@ -1,9 +1,20 @@
-import { act, render } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
-import { useCallback, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { createGStore } from "../../index";
 import { createContainer, nextTask } from "../lib";
 import { TestExternalStore } from "./test-external-store";
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("useSyncExternalStore in useGStore", () => {
   describe("Subscription and snapshot behavior", () => {
@@ -281,7 +292,7 @@ describe("useSyncExternalStore in useGStore", () => {
     });
   });
 
-  describe("Test with TestExternalStore", () => {
+  describe("Integration with external store", () => {
     const createTestStore = <V extends number | string, S extends { value: V }>(
       {
         renderHook,
@@ -415,6 +426,86 @@ describe("useSyncExternalStore in useGStore", () => {
       } finally {
         globalThis.window = originalWindow;
       }
+    });
+  });
+
+  describe("Handle nullish external store states with useEffect / useLayoutEffect in useGStore ", () => {
+    const createTestStore = <V extends number | string, S extends { value: V }>(
+      {
+        renderHook,
+        initialState,
+      }: { initialState: S; renderHook?: (name: string) => void },
+      { destroy }: { destroy?: "on-all-unsubscribed" } = {},
+    ) => {
+      const externalStore = new TestExternalStore<S | null | undefined>(
+        initialState,
+      );
+
+      const useGStore = createGStore(
+        () => {
+          const snapshot = useSyncExternalStore(
+            (listener) => externalStore.subscribe(listener),
+            () => externalStore.getSnapshot(),
+            () => externalStore.getSnapshot(),
+          );
+
+          useLayoutEffect(() => {
+            /* */
+          }, []);
+
+          useEffect(() => {
+            /* */
+          }, []);
+
+          return {
+            snapshot,
+          };
+        },
+        { destroy },
+      );
+
+      const Snapshot = () => {
+        const snapshot = useGStore(({ snapshot }) => snapshot);
+        renderHook?.("snapshot-value");
+        return <div data-testid="snapshot-value">{snapshot?.value}</div>;
+      };
+
+      return {
+        Snapshot,
+        useGStore,
+        externalStore,
+      };
+    };
+
+    test("Should handle external store updates and re-renders correctly", async () => {
+      const renderHook = vi.fn();
+
+      const { Snapshot, externalStore } = createTestStore({
+        renderHook,
+        initialState: { value: 1 as number },
+      });
+
+      const { getByTestId } = render(<Snapshot />);
+
+      expect(getByTestId("snapshot-value")).toHaveTextContent("1");
+      expect(renderHook).toHaveBeenCalledTimes(1);
+
+      await nextTask();
+
+      await act(async () => externalStore.setState(null));
+
+      expect(getByTestId("snapshot-value")).toBeEmptyDOMElement();
+      expect(renderHook).toHaveBeenCalledTimes(2);
+
+      await act(async () => externalStore.setState({ value: 2 }));
+
+      expect(getByTestId("snapshot-value")).toHaveTextContent("2");
+      expect(renderHook).toHaveBeenCalledTimes(3);
+
+      await act(async () => externalStore.setState(undefined));
+
+      expect(getByTestId("snapshot-value")).toBeEmptyDOMElement();
+      expect(renderHook).toHaveBeenCalledTimes(4);
     });
   });
 });
