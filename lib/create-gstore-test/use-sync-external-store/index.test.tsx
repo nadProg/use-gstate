@@ -2,8 +2,8 @@ import { act, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { useCallback, useState, useSyncExternalStore } from "react";
 import { createGStore } from "../../index";
-import { nextTask } from "../lib";
-import { TestExternalStore } from "./test-external-store.ts";
+import { createContainer, nextTask } from "../lib";
+import { TestExternalStore } from "./test-external-store";
 
 describe("useSyncExternalStore in useGStore", () => {
   describe("Subscription and snapshot behavior", () => {
@@ -259,8 +259,7 @@ describe("useSyncExternalStore in useGStore", () => {
 
         globalThis.window = originalWindow;
 
-        const container = document.createElement("div");
-        container.innerHTML = serverSnapshotHtml;
+        const container = createContainer({ html: serverSnapshotHtml });
 
         const { getByTestId } = render(<Snapshot />, {
           container,
@@ -398,8 +397,7 @@ describe("useSyncExternalStore in useGStore", () => {
 
         globalThis.window = originalWindow;
 
-        const container = document.createElement("div");
-        container.innerHTML = serverSnapshotHtml;
+        const container = createContainer({ html: serverSnapshotHtml });
 
         const { getByTestId } = render(<Snapshot />, {
           container,
