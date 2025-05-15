@@ -25,8 +25,11 @@ describe("useContext in useGStore", () => {
       setCounter: null,
     });
 
-    const Provider = ({ children }: PropsWithChildren) => {
-      const [counter, setCounter] = useState(1);
+    const Provider = ({
+      children,
+      initialValue,
+    }: PropsWithChildren<{ initialValue?: number }>) => {
+      const [counter, setCounter] = useState(initialValue ?? 1);
 
       return (
         <context.Provider value={{ counter, setCounter }}>
@@ -100,6 +103,24 @@ describe("useContext in useGStore", () => {
     expect(getByTestId("counter")).toHaveTextContent("1");
     expect(useGStore.getState()).toEqual({
       counter: 1,
+      setCounter: expect.any(Function),
+    });
+  });
+
+  test("Should render component with provider's initial state and initialize store with closest provider values", () => {
+    const { Counter, Provider, useGStore } = createTestStore();
+
+    const { getByTestId } = render(
+      <Provider initialValue={10}>
+        <Provider initialValue={20}>
+          <Counter />
+        </Provider>
+      </Provider>,
+    );
+
+    expect(getByTestId("counter")).toHaveTextContent("20");
+    expect(useGStore.getState()).toEqual({
+      counter: 20,
       setCounter: expect.any(Function),
     });
   });
