@@ -1,6 +1,10 @@
-import { render } from "@testing-library/react";
-import { describe, test, expect, vi } from "vitest";
+import { cleanup, render } from "@testing-library/react";
 import { GStore } from "./store.ts";
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("GStore - Configuration Options", () => {
   const stateFactoryStub = () => ({});
