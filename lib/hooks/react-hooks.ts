@@ -20,9 +20,12 @@ export class ReactHooksMock {
 
   private useReducer: typeof React.useReducer = (
     reducer: any,
-    initialState: any,
+    initialArg: any,
+    init?: any,
   ): [any, (action: any) => void] => {
-    const [state, setState] = this.useState(initialState);
+    const [state, setState] = this.useState(
+      typeof init === "function" ? init(initialArg) : initialArg,
+    );
     const dispatch = this.useCallback((action: any) => {
       setState((s: any) => reducer(s, action));
     }, []);
