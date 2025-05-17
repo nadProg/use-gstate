@@ -14,8 +14,8 @@ export class ReactHooksMock {
 
   private useState: typeof React.useState = (initialState?: any): any => {
     const store = this.context.getTopState();
-    store.next();
-    return store.getCurrent(initialState);
+    store.nextState();
+    return store.getCurrentState(initialState);
   };
 
   private useReducer: typeof React.useReducer = (
@@ -53,14 +53,14 @@ export class ReactHooksMock {
 
   private useEffect: typeof React.useEffect = (fn: any, deps: any) => {
     const store = this.context.getTopState();
-    store.next();
-    store.scheduleEffect({ fn, deps, type: "effect" });
+    store.nextEffect();
+    store.scheduleEffect({ fn, deps }, "effect");
   };
 
   private useLayoutEffect: typeof React.useEffect = (fn: any, deps: any) => {
     const store = this.context.getTopState();
-    store.next();
-    store.scheduleEffect({ fn, deps, type: "layout-effect" });
+    store.nextEffect();
+    store.scheduleEffect({ fn, deps }, "layout-effect");
   };
 
   private useSyncExternalStore: typeof React.useSyncExternalStore = (
