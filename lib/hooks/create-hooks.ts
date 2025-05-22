@@ -9,8 +9,8 @@ type HooksContext = {
 const createUseState = (context: HooksContext): typeof React.useState => {
   return (initialState?: any): any => {
     const store = context.getTopState();
-    store.next();
-    return store.getCurrent(initialState);
+    store.nextState();
+    return store.getCurrentState(initialState);
   };
 };
 
@@ -18,8 +18,14 @@ const createUseReducer = (context: HooksContext): typeof React.useReducer => {
   const useState = createUseState(context);
   const useCallback = createUseCallback(context);
 
-  return (reducer: any, initialState: any): [any, (action: any) => void] => {
-    const [state, setState] = useState(initialState);
+  return (
+    reducer: any,
+    initialArg: any,
+    init?: any,
+  ): [any, (action: any) => void] => {
+    const [state, setState] = useState(
+      typeof init === "function" ? init(initialArg) : initialArg,
+    );
     const dispatch = useCallback((action: any) => {
       setState((s: any) => reducer(s, action));
       /* eslint-disable-next-line react-hooks/exhaustive-deps */
@@ -62,8 +68,8 @@ const createUseCallback = (context: HooksContext): typeof React.useCallback => {
 const createUseEffect = (context: HooksContext): typeof React.useEffect => {
   return (fn: any, deps: any) => {
     const store = context.getTopState();
-    store.next();
-    store.scheduleEffect({ fn, deps, type: "effect" });
+    store.nextEffect();
+    store.scheduleEffect({ fn, deps }, "effect");
   };
 };
 
@@ -72,8 +78,8 @@ const createUseLayoutEffect = (
 ): typeof React.useLayoutEffect => {
   return (fn: any, deps: any) => {
     const store = context.getTopState();
-    store.next();
-    store.scheduleEffect({ fn, deps, type: "layout-effect" });
+    store.nextEffect();
+    store.scheduleEffect({ fn, deps }, "layout-effect");
   };
 };
 

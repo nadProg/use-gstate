@@ -447,7 +447,7 @@ describe("useEffect in useGStore", () => {
         expect(effectCleanupHook).not.toHaveBeenCalled();
       });
 
-      describe.skip("Handling nullish state updates", () => {
+      describe("Handling nullish state updates", () => {
         test("should not trigger effect or cleanup when setting state to null if the effect's dependencies remain unchanged", async () => {
           const effectHook = vi.fn();
           const effectCleanupHook = vi.fn();
@@ -1052,7 +1052,7 @@ describe("useEffect in useGStore", () => {
       });
     });
 
-    describe.skip("State update behavior", () => {
+    describe("State update behavior", () => {
       test("should run effect and cleanup on every state update via component interaction", async () => {
         const effectHook = vi.fn();
         const effectCleanupHook = vi.fn();

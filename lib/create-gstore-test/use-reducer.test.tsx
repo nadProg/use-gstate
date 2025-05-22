@@ -177,7 +177,7 @@ describe("useReducer in useGStore", () => {
     });
   });
 
-  describe.skip("Reducer initialization with initializer function", () => {
+  describe("Reducer initialization with initializer function", () => {
     const initialCounter = 0;
     const createInitialState = (counter: number) => ({ counter });
     const createTestComponents = ({
@@ -256,6 +256,18 @@ describe("useReducer in useGStore", () => {
         state: { counter: 0 },
         dispatch: expect.any(Function),
       });
+    });
+
+    test("should update state correctly", async () => {
+      const { Counter } = createTestComponents();
+
+      const { getByTestId } = render(<Counter />);
+
+      expect(getByTestId("counter-value")).toHaveTextContent("0");
+
+      await userEvent.click(getByTestId("increase-button"));
+
+      expect(getByTestId("counter-value")).toHaveTextContent("1");
     });
   });
 });

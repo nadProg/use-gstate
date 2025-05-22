@@ -12,40 +12,52 @@ const applyAction = <T>(action: React.SetStateAction<T>, last: T) => {
   }
 };
 
+type EffectType = "effect" | "layout-effect";
+
 type Effect = {
   fn: () => (() => void) | undefined;
-  deps: unknown[];
-  type: "effect" | "layout-effect";
+  deps: unknown[] | undefined;
 };
 
 type EffectState = {
-  __type: "effect";
   clearFunction: () => void;
-  deps: unknown[];
-  type: "effect" | "layout-effect";
+  lastDeps: unknown[] | undefined;
+  type: EffectType;
   effects: Effect[];
 };
 
-type DataList = Array<[any, React.Dispatch<React.SetStateAction<any>>]>;
+type StateList = Array<[any, React.Dispatch<React.SetStateAction<any>>]>;
 
 export class HooksStore {
-  listeners = new Set<() => void>();
-  dataList: DataList = new Array(30);
-  effects: Effect[] = new Array(30);
-  currentIndex = -1;
+  private listeners = new Set<() => void>();
+  private stateList: StateList = new Array(30);
+  private effectList: EffectState[] = new Array(30);
+  private stateIndex = -1;
+  private effectIndex = -1;
 
   private effectsBatcher: Batcher = new TimerBatcher();
   private layoutEffectsBatcher: Batcher = new MicroTaskBatcher();
 
-  timeout: ReturnType<typeof setTimeout> | undefined = undefined;
-
   constructor() {}
 
-  getCurrent<T = unknown>(
+  public nextState() {
+    this.stateIndex++;
+  }
+
+  public nextEffect() {
+    this.effectIndex++;
+  }
+
+  public resetCurrent() {
+    this.stateIndex = -1;
+    this.effectIndex = -1;
+  }
+
+  public getCurrentState<T = unknown>(
     initialState: T,
   ): [T, React.Dispatch<React.SetStateAction<T>>] {
-    const currentIndex = this.currentIndex;
-    let stateEntry = this.dataList[currentIndex];
+    const currentIndex = this.stateIndex;
+    let stateEntry = this.stateList[currentIndex];
 
     if (!stateEntry) {
       stateEntry = [
@@ -60,24 +72,30 @@ export class HooksStore {
         },
       ];
 
-      this.dataList[currentIndex] = stateEntry;
+      this.stateList[currentIndex] = stateEntry;
     }
 
     return stateEntry;
   }
 
-  scheduleEffect(effect: Effect) {
-    const effectsState = this.getCurrent({
-      __type: "effect",
-      clearFunction: () => {},
-      deps: ["______def_____"],
-      type: effect.type,
-      effects: [],
-    } as EffectState);
+  scheduleEffect(effect: Effect, type: EffectType) {
+    let effectsState = this.effectList[this.effectIndex] as
+      | EffectState
+      | undefined;
 
-    effectsState[0].effects.push(effect);
+    if (!effectsState) {
+      effectsState = {
+        type,
+        lastDeps: undefined,
+        effects: [effect],
+        clearFunction: () => null,
+      };
+      this.effectList[this.effectIndex] = effectsState;
+    } else {
+      effectsState.effects.push(effect);
+    }
 
-    if (effect.type === "layout-effect") {
+    if (type === "layout-effect") {
       this.layoutEffectsBatcher.schedule(() => {
         flushSync(() => {
           this.runAllEffects("layout-effect");
@@ -90,19 +108,20 @@ export class HooksStore {
     }
   }
 
-  runAllEffects(type: "layout-effect" | "effect") {
-    this.dataList.forEach(([data]) => {
-      if (data.__type === "effect" && data.type === type) {
-        const effectState = data as EffectState;
-
+  runAllEffects(type: EffectType) {
+    this.effectList.forEach((effectState) => {
+      if (effectState.type === type) {
         while (effectState.effects.length) {
           const effect = effectState.effects.shift()!;
 
-          if (shallowEqualArrays(effectState.deps, effect.deps)) {
+          if (
+            shallowEqualArrays(effectState.lastDeps, effect.deps) &&
+            effect.deps
+          ) {
             continue;
           }
           effectState.clearFunction();
-          effectState.deps = effect.deps;
+          effectState.lastDeps = effect.deps;
           effectState.clearFunction = effect.fn() ?? (() => {});
         }
       }
@@ -110,22 +129,15 @@ export class HooksStore {
   }
 
   destroy() {
-    this.dataList.forEach(([data]) => {
-      if (data.__type === "effect") {
-        const effectState = data as EffectState;
-        effectState.clearFunction();
-      }
+    this.runAllEffects("layout-effect");
+    this.runAllEffects("effect");
+    this.effectList.forEach((effectState) => {
+      effectState.clearFunction();
     });
-    this.dataList = [];
-    this.currentIndex = -1;
-  }
-
-  next() {
-    this.currentIndex++;
-  }
-
-  resetCurrent() {
-    this.currentIndex = -1;
+    this.stateList.length = 0;
+    this.stateIndex = -1;
+    this.effectList.length = 0;
+    this.effectIndex = -1;
   }
 
   notifyListeners() {
