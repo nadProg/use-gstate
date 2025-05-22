@@ -1,7 +1,7 @@
-import { flushSync } from "react-dom";
-import { Batcher, MicroTaskBatcher, TimerBatcher } from "../scheduler";
-import { shallowEqualArrays } from "../shallow-equal";
 import * as React from "react";
+import { flushSync } from "react-dom";
+import { shallowEqualArrays } from "../shallow-equal";
+import { Batcher, MicroTaskBatcher, TimerBatcher } from "../scheduler";
 
 const applyAction = <T>(action: React.SetStateAction<T>, last: T) => {
   if (typeof action === "function") {
