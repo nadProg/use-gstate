@@ -1,9 +1,9 @@
 import { HooksStore } from "./hooks-store";
-import { ReactHooksMock } from "./react-hooks";
+import { createHooks } from "./create-hooks";
+import { createApplyHooks } from "./create-apply-hooks";
 
 export class HooksContext {
   stateStack: HooksStore[] = [];
-  private hooks = new ReactHooksMock(this);
 
   constructor() {}
 
@@ -21,7 +21,7 @@ export class HooksContext {
 
   runInContext<T>(fn: () => T, state: HooksStore) {
     this.stateStack.push(state);
-    const restoreHooks = this.hooks.applyHooks();
+    const restoreHooks = applyHooks();
 
     try {
       return fn();
@@ -33,4 +33,19 @@ export class HooksContext {
   }
 }
 
-export const hooksContext = new HooksContext();
+const hooksContext = new HooksContext();
+const hooks = createHooks(hooksContext);
+const { applyHooks } = createApplyHooks(hooks);
+
+export { hooksContext };
+export const {
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useSyncExternalStore,
+  useContext,
+  useReducer,
+} = hooks;
