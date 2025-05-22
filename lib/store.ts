@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import * as React from "react";
-import { hooksContext } from "./hooks";
+import { runInHooksContext } from "./hooks";
 import { HooksStore } from "./hooks/hooks-store";
 import { shallowEqual } from "./shallow-equal";
 import { MicroTaskBatcher } from "./scheduler";
@@ -52,7 +52,7 @@ export class GStore<T> {
     if (this.isFresh) {
       return this.valueCache!;
     } else {
-      const result = hooksContext.runInContext(
+      const result = runInHooksContext(
         () => this.stateFactory(),
         this.hooksStore,
       );
