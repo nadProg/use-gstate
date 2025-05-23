@@ -8,7 +8,7 @@ export type SubscriptionEventName =
 
 type SubscriptionEvent = {
   name: SubscriptionEventName;
-  callbacks: (SubscriptionCallback | undefined)[];
+  callback: SubscriptionCallback | undefined;
 };
 
 export type RunAllCallbacksPayload =
@@ -44,11 +44,11 @@ export class SubscriptionEventsStore {
     if (!subscriptionEvent) {
       subscriptionEvent = {
         name: eventName,
-        callbacks: [callback],
+        callback,
       };
       this.events[this.eventIndex] = subscriptionEvent;
     } else {
-      subscriptionEvent.callbacks.push(callback);
+      subscriptionEvent.callback = callback;
     }
   }
 
@@ -61,9 +61,7 @@ export class SubscriptionEventsStore {
     this.events
       .filter((subscriptionState) => subscriptionState.name === name)
       .forEach((subscriptionState) => {
-        subscriptionState.callbacks.forEach((callback) => {
-          callback?.(listenersCount);
-        });
+        subscriptionState.callback?.(listenersCount);
       });
   }
 }
