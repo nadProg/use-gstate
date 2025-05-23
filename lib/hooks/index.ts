@@ -10,3 +10,4 @@ export {
   useSyncExternalStore,
 } from "./hooks";
 export { runInHooksContext } from "./run-in-hooks-context";
+export { useOnSubscribed } from "./subscription-hooks";

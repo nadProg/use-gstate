@@ -28,15 +28,27 @@ type EffectState = {
 
 type StateList = Array<[any, React.Dispatch<React.SetStateAction<any>>]>;
 
+type SubscriptionCallback = (listenersCount: number | undefined) => void;
+
+type SubscriptionEventType = "on-subscribed" | "on-first-subscribed";
+
+type SubscriptionEventState = {
+  type: SubscriptionEventType;
+  callbacks: (SubscriptionCallback | undefined)[];
+};
+
 export class HooksStore {
   private listeners = new Set<() => void>();
   private stateList: StateList = new Array(30);
   private effectList: EffectState[] = new Array(30);
+  private subscriptionEventList: SubscriptionEventState[] = new Array(30);
   private stateIndex = -1;
   private effectIndex = -1;
+  private subscriptionEventIndex = -1;
 
   private effectsBatcher: Batcher = new TimerBatcher();
   private layoutEffectsBatcher: Batcher = new MicroTaskBatcher();
+  private subscriptionEventBatcher: Batcher = new TimerBatcher();
 
   constructor() {}
 
@@ -48,9 +60,14 @@ export class HooksStore {
     this.effectIndex++;
   }
 
+  public nextSubscriptionEvent() {
+    this.subscriptionEventIndex++;
+  }
+
   public resetCurrent() {
     this.stateIndex = -1;
     this.effectIndex = -1;
+    this.subscriptionEventIndex = -1;
   }
 
   public getCurrentState<T = unknown>(
@@ -126,6 +143,42 @@ export class HooksStore {
         }
       }
     });
+  }
+
+  scheduleSubscriptionEffect(
+    callback: SubscriptionCallback | undefined,
+    type: SubscriptionEventType,
+  ) {
+    let subscriptionEventState = this.subscriptionEventList[
+      this.subscriptionEventIndex
+    ] as SubscriptionEventState | undefined;
+
+    if (!subscriptionEventState) {
+      subscriptionEventState = {
+        type,
+        callbacks: [callback],
+      };
+      this.subscriptionEventList[this.subscriptionEventIndex] =
+        subscriptionEventState;
+    } else {
+      subscriptionEventState.callbacks.push(callback);
+    }
+  }
+
+  runAllSubscriptionEffects(
+    type: SubscriptionEventType,
+    listenersSize?: number,
+  ) {
+    const run = () =>
+      this.subscriptionEventList
+        .filter((subscriptionState) => subscriptionState.type === type)
+        .forEach((subscriptionState) => {
+          subscriptionState.callbacks.forEach((callback) => {
+            callback?.(listenersSize);
+          });
+        });
+
+    this.subscriptionEventBatcher.schedule(run);
   }
 
   destroy() {

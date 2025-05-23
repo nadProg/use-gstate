@@ -67,6 +67,10 @@ export class GStore<T> {
   subscribe = (callback: Listener) => {
     this.listeners.add(callback);
     this.options?.onSubscribed?.(this.listeners.size);
+    this.hooksStore.runAllSubscriptionEffects(
+      "on-subscribed",
+      this.listeners.size,
+    );
 
     if (this.listeners.size === 1) {
       this.options?.onFirstSubscribed?.();
