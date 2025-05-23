@@ -5,14 +5,26 @@ import {
   useState,
   useEffect,
   useOnSubscribed,
+  useOnAllUnsubscribed,
+  useOnFirstSubscribed,
+  useOnUnsubscribed,
 } from "../index";
-import { nextTask } from "./lib.ts";
 
 afterEach(() => {
   vi.clearAllMocks();
 });
 
-const createTestGStore = ({ onSubscribed }: { onSubscribed?: () => void }) =>
+const createTestGStore = ({
+  onSubscribed,
+  onFirstSubscribed,
+  onUnsubscribed,
+  onAllUnsubscribed,
+}: {
+  onSubscribed: () => void;
+  onFirstSubscribed: () => void;
+  onUnsubscribed: () => void;
+  onAllUnsubscribed: () => void;
+}) =>
   createGStore(() => {
     const [counter, setCounter] = useState(0);
 
@@ -26,6 +38,9 @@ const createTestGStore = ({ onSubscribed }: { onSubscribed?: () => void }) =>
     }, [counter]);
 
     useOnSubscribed(onSubscribed);
+    useOnFirstSubscribed(onFirstSubscribed);
+    useOnAllUnsubscribed(onAllUnsubscribed);
+    useOnUnsubscribed(onUnsubscribed);
 
     return {
       counter,
@@ -33,31 +48,63 @@ const createTestGStore = ({ onSubscribed }: { onSubscribed?: () => void }) =>
     };
   });
 
-describe("Subscription hooks", () => {
-  test("Should call useOnSubscribed", async () => {
+describe("Subscription event hooks", () => {
+  test("Should call useOnSubscribed / onFirstSubscribed / onUnsubscribed / onAllUnsubscribed properly", async () => {
     const onSubscribed = vi.fn();
-    const useGStore = createTestGStore({ onSubscribed });
+    const onFirstSubscribed = vi.fn();
+    const onUnsubscribed = vi.fn();
+    const onAllUnsubscribed = vi.fn();
+    const useGStore = createTestGStore({
+      onSubscribed,
+      onFirstSubscribed,
+      onUnsubscribed,
+      onAllUnsubscribed,
+    });
 
     expect(onSubscribed).not.toHaveBeenCalled();
+    expect(onFirstSubscribed).not.toHaveBeenCalled();
 
     useGStore.getState();
-    await nextTask();
+
     expect(onSubscribed).not.toHaveBeenCalled();
+    expect(onFirstSubscribed).not.toHaveBeenCalled();
 
     const unsubscribe1 = useGStore.subscribe(() => null);
-    await nextTask();
+
+    expect(onFirstSubscribed).toHaveBeenCalledTimes(1);
+    expect(onFirstSubscribed).toHaveBeenLastCalledWith(undefined);
     expect(onSubscribed).toHaveBeenCalledTimes(1);
+    expect(onSubscribed).toHaveBeenLastCalledWith(1);
 
     const unsubscribe2 = useGStore.subscribe(() => null);
     const unsubscribe3 = useGStore.subscribe(() => null);
 
-    await nextTask();
     expect(onSubscribed).toHaveBeenCalledTimes(3);
+
+    expect(onUnsubscribed).not.toHaveBeenCalled();
+    expect(onAllUnsubscribed).not.toHaveBeenCalled();
 
     unsubscribe1();
+
+    expect(onUnsubscribed).toHaveBeenCalledTimes(1);
+    expect(onUnsubscribed).toHaveBeenLastCalledWith(2);
+
     unsubscribe2();
+
+    expect(onAllUnsubscribed).not.toHaveBeenCalled();
+
     unsubscribe3();
 
+    expect(onFirstSubscribed).toHaveBeenCalledTimes(1);
+    expect(onFirstSubscribed).toHaveBeenLastCalledWith(undefined);
+
     expect(onSubscribed).toHaveBeenCalledTimes(3);
+    expect(onSubscribed).toHaveBeenLastCalledWith(3);
+
+    expect(onUnsubscribed).toHaveBeenCalledTimes(3);
+    expect(onUnsubscribed).toHaveBeenLastCalledWith(0);
+
+    expect(onAllUnsubscribed).toHaveBeenCalledTimes(1);
+    expect(onAllUnsubscribed).toHaveBeenLastCalledWith(undefined);
   });
 });
