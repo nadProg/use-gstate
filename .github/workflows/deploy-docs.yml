@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  ORIGINAL_REPOSITORY_OWNER: evo-community
+
 permissions:
   contents: read
   pages: write
@@ -17,6 +20,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.repository_owner == env.ORIGINAL_REPOSITORY_OWNER
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -40,6 +44,7 @@ jobs:
           path: ./docs/dist
 
   deploy:
+    if: github.repository_owner == env.ORIGINAL_REPOSITORY_OWNER
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
